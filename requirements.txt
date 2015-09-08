@@ -1,0 +1,8 @@
+# talkey
+configy
+
+# What follows here is just for testing or code grading:
+tox
+pylint
+coverage
+
