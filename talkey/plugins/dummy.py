@@ -1,5 +1,6 @@
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
 
+
 class DummyTTS(AbstractTTSEngine):
     """
     Dummy TTS engine that logs phrases with INFO level instead of synthesizing

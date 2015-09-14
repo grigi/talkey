@@ -6,6 +6,7 @@ import requests
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
 from talkey.utils import memoize
 
+
 class MaryTTS(AbstractTTSEngine):
     """
     Uses the MARY Text-to-Speech System (MaryTTS)
@@ -78,9 +79,9 @@ class MaryTTS(AbstractTTSEngine):
                  'LOCALE': voiceinfo['locale'],
                  'VOICE': voice}
 
-        r = requests.get(self._makeurl('/process', query=query))
+        res = requests.get(self._makeurl('/process', query=query))
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
-            f.write(r.content)
+            f.write(res.content)
             tmpfile = f.name
         self.play(tmpfile)
         os.remove(tmpfile)

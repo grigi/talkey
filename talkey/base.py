@@ -14,7 +14,7 @@ DETECTABLE_LANGS = sorted([a[0] for a in langid.rank('')])
 
 class TTSError(Exception):
 
-    def __init__(self, error, valid_set=None): # pylint: disable=W0231
+    def __init__(self, error, valid_set=None):  # pylint: disable=W0231
         self.error = error
         self.valid_set = valid_set
 

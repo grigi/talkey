@@ -5,6 +5,7 @@ import pipes
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
 from talkey.utils import check_executable, memoize
 
+
 class EspeakTTS(AbstractTTSEngine):
     """
     Uses the eSpeak speech synthesizer.
@@ -30,7 +31,7 @@ class EspeakTTS(AbstractTTSEngine):
     @memoize
     def get_options(self):
         output = subprocess.Popen(['espeak', '--voices=variant'], stdout=subprocess.PIPE).stdout.read()
-        variants = [row[row.find('!v/')+3:].strip() for row in output.split('\n')[1:] if row]
+        variants = [row[row.find('!v/') + 3:].strip() for row in output.split('\n')[1:] if row]
         return {
             'variant': {
                 'type': 'enum',
@@ -64,7 +65,7 @@ class EspeakTTS(AbstractTTSEngine):
         for voice in voices:
             lang = voice[0].split('-')[0]
             if lang in langs:
-                tree[lang]['voices'][voice[2]] = {'gender': voice[1],}
+                tree[lang]['voices'][voice[2]] = {'gender': voice[1]}
                 #tree[lang]['voices'].append({'gender': voice[1], 'name': voice[2]})
                 if lang == voice[0]:
                     tree[lang]['default'] = voice[2]

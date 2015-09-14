@@ -5,6 +5,7 @@ import pipes
 from talkey.base import AbstractTTSEngine
 from talkey.utils import check_executable, memoize
 
+
 class FliteTTS(AbstractTTSEngine):
     """
     Uses the flite speech synthesizer
@@ -27,11 +28,11 @@ class FliteTTS(AbstractTTSEngine):
     @memoize
     def get_languages(self, detectable=True):
         output = subprocess.Popen(['flite', '-lv'], stdout=subprocess.PIPE).stdout.read()
-        voices = output[output.find(':')+1:].split()
+        voices = output[output.find(':') + 1:].split()
         return {
             'en': {
                 'default': 'kal',
-                'voices': {voice:{} for voice in voices}
+                'voices': {voice: {} for voice in voices}
             }
         }
 

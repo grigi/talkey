@@ -5,6 +5,7 @@ import pipes
 from talkey.base import AbstractTTSEngine
 from talkey.utils import check_executable, memoize
 
+
 class FestivalTTS(AbstractTTSEngine):
     """
     Uses the festival speech synthesizer
@@ -29,7 +30,7 @@ class FestivalTTS(AbstractTTSEngine):
                     output = out_f.read().strip()
                     if output:
                         self._logger.debug("Output was: '%s'", output)
-                    return ('No default voice found' not in output)
+                    return 'No default voice found' not in output
         return False
 
     def get_options(self):

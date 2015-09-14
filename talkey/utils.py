@@ -3,9 +3,9 @@ import sys
 import logging
 import functools
 if sys.version_info < (3, 3):
-    from distutils.spawn import find_executable # pylint: disable=E0611
+    from distutils.spawn import find_executable  # pylint: disable=E0611
 else:
-    from shutil import which as find_executable # pylint: disable=E0611
+    from shutil import which as find_executable  # pylint: disable=E0611
 
 
 def check_executable(executable):
