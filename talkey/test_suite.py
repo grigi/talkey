@@ -4,7 +4,7 @@ talkey test suite
 # pylint: disable=W0104
 import os
 from configy import load_config, config
-from .languages import DETECTABLE_LANGS
+from talkey.base import DETECTABLE_LANGS, TTSError
 
 BASE_DIR = os.path.dirname(__file__)
 

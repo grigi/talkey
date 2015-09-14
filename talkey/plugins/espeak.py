@@ -1,8 +1,9 @@
 import os
 import subprocess
 import tempfile
-from talkey.base import AbstractTTSEngine, diagnose, pipes
-
+import pipes
+from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
+from talkey.utils import check_executable, memoize
 
 class EspeakTTS(AbstractTTSEngine):
     """
@@ -11,44 +12,77 @@ class EspeakTTS(AbstractTTSEngine):
     """
 
     SLUG = "espeak-tts"
-
-    def __init__(self, voice='default+m3', pitch_adjustment=40, words_per_minute=160):
-        super(self.__class__, self).__init__()
-        self.voice = voice
-        self.pitch_adjustment = pitch_adjustment
-        self.words_per_minute = words_per_minute
-
-    @classmethod
-    def is_available(cls):
-        return (cls.has_audio_output() and
-                diagnose.check_executable('espeak'))
+    # http://espeak.sourceforge.net/languages.html
+    QUALITY_LANGS = [
+        'en', 'af', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'eo', 'es',
+        'fi', 'fr', 'hr', 'hu', 'it', 'kn', 'ku', 'lv', 'nl', 'pl',
+        'pt', 'ro', 'sk', 'sr', 'sv', 'sw', 'ta', 'tr', 'zh'
+    ]
 
     @classmethod
-    def get_languages(cls):
+    def get_init_options(cls):
+        return {}
+
+    @memoize
+    def is_available(self):
+        return check_executable('espeak')
+
+    @memoize
+    def get_options(self):
+        output = subprocess.Popen(['espeak', '--voices=variant'], stdout=subprocess.PIPE).stdout.read()
+        variants = [row[row.find('!v/')+3:].strip() for row in output.split('\n')[1:] if row]
+        return {
+            'variant': {
+                'type': 'enum',
+                'values': variants,
+                'default': 'm3',
+            },
+            'pitch_adjustment': {
+                'type': 'int',
+                'min': 0,
+                'max': 99,
+                'default': 50,
+            },
+            'words_per_minute': {
+                'type': 'int',
+                'min': 80,
+                'max': 450,
+                'default': 175,
+            },
+        }
+
+    @memoize
+    def get_languages(self, quality=True, detectable=True):
         output = subprocess.Popen(['espeak', '--voices'], stdout=subprocess.PIPE).stdout.read()
         voices = [row.split()[1:4] for row in output.split('\n')[1:] if row]
         langs = set([voice[0].split('-')[0] for voice in voices])
-        tree = dict([(lang, {'default': None, 'voices': []}) for lang in langs])
+        if detectable:
+            langs = [lang for lang in langs if lang in DETECTABLE_LANGS]
+        if quality:
+            langs = [lang for lang in langs if lang in self.QUALITY_LANGS]
+        tree = dict([(lang, {'default': None, 'voices': {}}) for lang in langs])
         for voice in voices:
             lang = voice[0].split('-')[0]
-            tree[lang]['voices'].append({'gender': voice[1], 'name': voice[2]})
-            if lang == voice[0]:
-                tree[lang]['default'] = voice[2]
+            if lang in langs:
+                tree[lang]['voices'][voice[2]] = {'gender': voice[1],}
+                #tree[lang]['voices'].append({'gender': voice[1], 'name': voice[2]})
+                if lang == voice[0]:
+                    tree[lang]['default'] = voice[2]
         for lang in langs:
             if tree[lang]['default'] is None:
                 # If no explicit default, set it to the one with the shortest voice name
-                tree[lang]['default'] = sorted([voice['name'] for voice in tree[lang]['voices']])[0]
+                tree[lang]['default'] = sorted(tree[lang]['voices'].keys())[0]
         return tree
 
-    def say(self, phrase):
+    def _say(self, phrase, language, voice, voiceinfo, options):
         self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             fname = f.name
         cmd = [
-            'espeak', 
-            '-v', self.voice,
-            '-p', self.pitch_adjustment,
-            '-s', self.words_per_minute,
+            'espeak',
+            '-v', voice + '+' + options['variant'],
+            '-p', options['pitch_adjustment'],
+            '-s', options['words_per_minute'],
             '-w', fname,
             phrase
         ]
@@ -63,4 +97,3 @@ class EspeakTTS(AbstractTTSEngine):
                 self._logger.debug("Output was: '%s'", output)
         self.play(fname)
         os.remove(fname)
-

@@ -29,8 +29,8 @@ setup(
 
     # Dependencies
     install_requires=[
-        'configy',
         'langid',
+        'requests',
     ],
     tests_require=get_test_requirements(),
 
