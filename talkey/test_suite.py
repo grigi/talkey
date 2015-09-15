@@ -21,10 +21,56 @@ def fakeplay(self, filename):
     LAST_PLAY = (self, filename, output)
 AbstractTTSEngine.play = fakeplay
 
-class DummyTTSTest(unittest.TestCase):
+class BaseTTSTest(unittest.TestCase):
     '''
     Tests talkey basic functionality
     '''
+    CLS = None
+    SLUG = None
+    INIT_ATTRS = []
+    CONF = {}
+    OBJ_ATTRS = []
+    EVAL_PLAY = True
+
+    @classmethod
+    def setUpClass(cls):
+        if not cls.CLS:
+            raise unittest.SkipTest()
+
+    def setUp(self):
+        global LAST_PLAY
+        LAST_PLAY = None
+
+    def test_class_init_options(self):
+        cls = self.CLS
+        self.assertEqual(cls.SLUG, self.SLUG)
+        self.assertEqual(sorted(cls.get_init_options().keys()), sorted(self.INIT_ATTRS))
+
+    def test_class_instantiation(self):
+        obj = self.CLS(**self.CONF)
+        self.assertEqual(obj.SLUG, self.SLUG)
+        self.assertEqual(obj.is_available(), True)
+        self.assertEqual(sorted(obj.get_options().keys()), sorted(self.OBJ_ATTRS))
+
+    def test_class_configure(self):
+        obj = self.CLS(**self.CONF)
+        language, voice, voiceinfo, options = obj.configure()
+        self.assertEqual(language, 'en')
+        self.assertIsNotNone(voice)
+        self.assertEqual(voice, obj.get_languages()['en']['default'])
+        self.assertEqual(sorted(options.keys()), sorted(self.OBJ_ATTRS))
+
+    def test_class_say(self):
+        obj = self.CLS(**self.CONF)
+        obj.say('Cows go moo')
+        if self.EVAL_PLAY:
+            inst, filename, output = LAST_PLAY
+            self.assertIn('WAVE audio', output)
+            self.assertEqual(inst, obj)
+            self.assertFalse(isfile(filename), 'Tempfile not deleted')
+
+
+class DummyTTSTest(BaseTTSTest):
     CLS = DummyTTS
     SLUG = 'dummy-tts'
     INIT_ATTRS = ['enabled']
@@ -34,35 +80,8 @@ class DummyTTSTest(unittest.TestCase):
     OBJ_ATTRS = []
     EVAL_PLAY = False
 
-    def setUp(self):
-        global LAST_PLAY
-        LAST_PLAY = None
 
-    def test_instantiate_blank(self):
-        cls = self.CLS
-        self.assertEqual(cls.SLUG, self.SLUG)
-        self.assertEqual(sorted(cls.get_init_options().keys()), sorted(self.INIT_ATTRS))
-
-        obj = cls(**self.CONF)
-        self.assertEqual(obj.SLUG, self.SLUG)
-        self.assertEqual(obj.is_available(), True)
-        self.assertEqual(sorted(obj.get_options().keys()), sorted(self.OBJ_ATTRS))
-
-        language, voice, voiceinfo, options = obj.configure()
-        self.assertEqual(language, 'en')
-        self.assertIsNotNone(voice)
-        self.assertEqual(voice, obj.get_languages()['en']['default'])
-        self.assertEqual(sorted(options.keys()), sorted(self.OBJ_ATTRS))
-
-        obj.say('Cows go moo')
-        if self.EVAL_PLAY:
-            inst, filename, output = LAST_PLAY
-            self.assertIn('WAVE audio', output)
-            self.assertEqual(inst, obj)
-            self.assertFalse(isfile(filename), 'Tempfile not deleted')
-
-
-class FestivalTTSTest(DummyTTSTest):
+class FestivalTTSTest(BaseTTSTest):
     CLS = FestivalTTS
     SLUG = 'festival-tts'
     INIT_ATTRS = []
@@ -70,7 +89,8 @@ class FestivalTTSTest(DummyTTSTest):
     OBJ_ATTRS = []
     EVAL_PLAY = True
 
-class FliteTTSTest(DummyTTSTest):
+
+class FliteTTSTest(BaseTTSTest):
     CLS = FliteTTS
     SLUG = 'flite-tts'
     INIT_ATTRS = []
@@ -78,7 +98,8 @@ class FliteTTSTest(DummyTTSTest):
     OBJ_ATTRS = []
     EVAL_PLAY = True
 
-class EspeakTTSTest(DummyTTSTest):
+
+class EspeakTTSTest(BaseTTSTest):
     CLS = EspeakTTS
     SLUG = 'espeak-tts'
     INIT_ATTRS = []
