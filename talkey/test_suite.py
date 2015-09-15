@@ -38,6 +38,9 @@ class BaseTTSTest(unittest.TestCase):
             raise unittest.SkipTest()
 
     def setUp(self):
+        if not self.CLS:
+            raise unittest.SkipTest()
+
         global LAST_PLAY
         LAST_PLAY = None
 
