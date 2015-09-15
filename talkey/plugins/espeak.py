@@ -30,7 +30,7 @@ class EspeakTTS(AbstractTTSEngine):
 
     @memoize
     def get_options(self):
-        output = subprocess.Popen(['espeak', '--voices=variant'], stdout=subprocess.PIPE).stdout.read()
+        output = subprocess.Popen(['espeak', '--voices=variant'], stdout=subprocess.PIPE).stdout.read().decode('utf-8')
         variants = [row[row.find('!v/') + 3:].strip() for row in output.split('\n')[1:] if row]
         return {
             'variant': {
@@ -54,7 +54,7 @@ class EspeakTTS(AbstractTTSEngine):
 
     @memoize
     def get_languages(self, quality=True, detectable=True):
-        output = subprocess.Popen(['espeak', '--voices'], stdout=subprocess.PIPE).stdout.read()
+        output = subprocess.Popen(['espeak', '--voices'], stdout=subprocess.PIPE).stdout.read().decode('utf-8')
         voices = [row.split()[1:4] for row in output.split('\n')[1:] if row]
         langs = set([voice[0].split('-')[0] for voice in voices])
         if detectable:
@@ -93,7 +93,7 @@ class EspeakTTS(AbstractTTSEngine):
         with tempfile.TemporaryFile() as f:
             subprocess.call(cmd, stdout=f, stderr=f)
             f.seek(0)
-            output = f.read()
+            output = f.read().decode('utf-8').split()
             if output:
                 self._logger.debug("Output was: '%s'", output)
         self.play(fname)

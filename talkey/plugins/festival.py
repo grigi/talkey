@@ -27,7 +27,7 @@ class FestivalTTS(AbstractTTSEngine):
                     self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
                     subprocess.call(cmd, stdin=in_f, stdout=out_f, stderr=out_f)
                     out_f.seek(0)
-                    output = out_f.read().strip()
+                    output = out_f.read().strip().decode('utf-8')
                     if output:
                         self._logger.debug("Output was: '%s'", output)
                     return 'No default voice found' not in output
@@ -51,6 +51,6 @@ class FestivalTTS(AbstractTTSEngine):
                 self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
                 subprocess.call(cmd, stdin=in_f)
                 err_f.seek(0)
-                output = err_f.read()
+                output = err_f.read().decode('utf-8').strip()
                 if output:
                     self._logger.debug("Output was: '%s'", output)

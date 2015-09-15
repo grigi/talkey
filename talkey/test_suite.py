@@ -38,24 +38,24 @@ class DummyTTSTest(unittest.TestCase):
         self.assertEqual(sorted(options.keys()), sorted(self.OBJ_ATTRS))
 
 
-#class FestivalTTSTest(DummyTTSTest):
-    #CLS = FestivalTTS
-    #SLUG = 'festival-tts'
-    #INIT_ATTRS = []
-    #CONF = {}
-    #OBJ_ATTRS = []
+class FestivalTTSTest(DummyTTSTest):
+    CLS = FestivalTTS
+    SLUG = 'festival-tts'
+    INIT_ATTRS = []
+    CONF = {}
+    OBJ_ATTRS = []
 
-#class FliteTTSTest(DummyTTSTest):
-    #CLS = FliteTTS
-    #SLUG = 'flite-tts'
-    #INIT_ATTRS = []
-    #CONF = {}
-    #OBJ_ATTRS = []
+class FliteTTSTest(DummyTTSTest):
+    CLS = FliteTTS
+    SLUG = 'flite-tts'
+    INIT_ATTRS = []
+    CONF = {}
+    OBJ_ATTRS = []
 
-#class EspeakTTSTest(DummyTTSTest):
-    #CLS = EspeakTTS
-    #SLUG = 'espeak-tts'
-    #INIT_ATTRS = []
-    #CONF = {}
-    #OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
+class EspeakTTSTest(DummyTTSTest):
+    CLS = EspeakTTS
+    SLUG = 'espeak-tts'
+    INIT_ATTRS = []
+    CONF = {}
+    OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
 
