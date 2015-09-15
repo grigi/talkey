@@ -27,7 +27,7 @@ class FliteTTS(AbstractTTSEngine):
 
     @memoize
     def get_languages(self, detectable=True):
-        output = subprocess.Popen(['flite', '-lv'], stdout=subprocess.PIPE).stdout.read().decode('utf-8')
+        output = subprocess.check_output(['flite', '-lv'], universal_newlines=True)
         voices = output[output.find(':') + 1:].split()
         return {
             'en': {
@@ -46,11 +46,8 @@ class FliteTTS(AbstractTTSEngine):
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             fname = f.name
         cmd.append(fname)
-        with tempfile.SpooledTemporaryFile() as out_f:
-            self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
-            subprocess.call(cmd, stdout=out_f, stderr=out_f)
-            out_f.seek(0)
-            output = out_f.read().decode('utf-8').strip()
+        self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, universal_newlines=True).strip()
         if output:
             self._logger.debug("Output was: '%s'", output)
         self.play(fname)

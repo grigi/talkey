@@ -30,7 +30,7 @@ class EspeakTTS(AbstractTTSEngine):
 
     @memoize
     def get_options(self):
-        output = subprocess.Popen(['espeak', '--voices=variant'], stdout=subprocess.PIPE).stdout.read().decode('utf-8')
+        output = subprocess.check_output(['espeak', '--voices=variant'], universal_newlines=True)
         variants = [row[row.find('!v/') + 3:].strip() for row in output.split('\n')[1:] if row]
         return {
             'variant': {
@@ -54,7 +54,7 @@ class EspeakTTS(AbstractTTSEngine):
 
     @memoize
     def get_languages(self, quality=True, detectable=True):
-        output = subprocess.Popen(['espeak', '--voices'], stdout=subprocess.PIPE).stdout.read().decode('utf-8')
+        output = subprocess.check_output(['espeak', '--voices'], universal_newlines=True)
         voices = [row.split()[1:4] for row in output.split('\n')[1:] if row]
         langs = set([voice[0].split('-')[0] for voice in voices])
         if detectable:
@@ -88,13 +88,9 @@ class EspeakTTS(AbstractTTSEngine):
             phrase
         ]
         cmd = [str(x) for x in cmd]
-        self._logger.debug('Executing %s', ' '.join([pipes.quote(arg)
-                                                     for arg in cmd]))
-        with tempfile.TemporaryFile() as f:
-            subprocess.call(cmd, stdout=f, stderr=f)
-            f.seek(0)
-            output = f.read().decode('utf-8').split()
-            if output:
-                self._logger.debug("Output was: '%s'", output)
+        self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, universal_newlines=True).strip()
+        if output:
+            self._logger.debug("Output was: '%s'", output)
         self.play(fname)
         os.remove(fname)
