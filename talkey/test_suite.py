@@ -10,6 +10,15 @@ try:
 except ImportError:
     import unittest
 
+LAST_PLAY = None
+
+# Patch AbstractTTSEngine.play to record its params
+from talkey.base import AbstractTTSEngine, subprocess
+def fakeplay(self, filename):
+    global LAST_PLAY
+    output = subprocess.check_output(['file', filename], universal_newlines=True)
+    LAST_PLAY = (self, filename, output)
+AbstractTTSEngine.play = fakeplay
 
 class DummyTTSTest(unittest.TestCase):
     '''
@@ -22,20 +31,33 @@ class DummyTTSTest(unittest.TestCase):
         'enabled': True,
     }
     OBJ_ATTRS = []
+    EVAL_PLAY = False
+
+    def setUp(self):
+        global LAST_PLAY
+        LAST_PLAY = None
 
     def test_instantiate_blank(self):
         cls = self.CLS
         self.assertEqual(cls.SLUG, self.SLUG)
         self.assertEqual(sorted(cls.get_init_options().keys()), sorted(self.INIT_ATTRS))
+
         obj = cls(**self.CONF)
         self.assertEqual(obj.SLUG, self.SLUG)
         self.assertEqual(obj.is_available(), True)
         self.assertEqual(sorted(obj.get_options().keys()), sorted(self.OBJ_ATTRS))
+
         language, voice, voiceinfo, options = obj.configure()
         self.assertEqual(language, 'en')
         self.assertIsNotNone(voice)
         self.assertEqual(voice, obj.get_languages()['en']['default'])
         self.assertEqual(sorted(options.keys()), sorted(self.OBJ_ATTRS))
+
+        obj.say('Cows go moo')
+        if self.EVAL_PLAY:
+            inst, filename, output = LAST_PLAY
+            self.assertIn('WAVE audio', output)
+            self.assertEqual(inst, obj)
 
 
 class FestivalTTSTest(DummyTTSTest):
@@ -44,6 +66,7 @@ class FestivalTTSTest(DummyTTSTest):
     INIT_ATTRS = []
     CONF = {}
     OBJ_ATTRS = []
+    EVAL_PLAY = True
 
 class FliteTTSTest(DummyTTSTest):
     CLS = FliteTTS
@@ -51,6 +74,7 @@ class FliteTTSTest(DummyTTSTest):
     INIT_ATTRS = []
     CONF = {}
     OBJ_ATTRS = []
+    EVAL_PLAY = True
 
 class EspeakTTSTest(DummyTTSTest):
     CLS = EspeakTTS
@@ -58,4 +82,5 @@ class EspeakTTSTest(DummyTTSTest):
     INIT_ATTRS = []
     CONF = {}
     OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
+    EVAL_PLAY = True
 

@@ -13,6 +13,12 @@ class FestivalTTS(AbstractTTSEngine):
 
     SLUG = 'festival-tts'
 
+    SAY_TEMPLATE = """(Parameter.set 'Audio_Required_Format 'riff)
+(Parameter.set 'Audio_Command "mv $FILE {outfilename}")
+(Parameter.set 'Audio_Method 'Audio_Command)
+(SayText "{phrase}")
+"""
+
     @classmethod
     def get_init_options(cls):
         return {}
@@ -39,11 +45,16 @@ class FestivalTTS(AbstractTTSEngine):
 
     def _say(self, phrase, language, voice, voiceinfo, options):
         self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
-        cmd = ['festival', '--tts']
+        cmd = ['festival', '--pipe']
+        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
+            fname = f.name
         with tempfile.SpooledTemporaryFile() as in_f:
-            in_f.write(phrase)
+            in_f.write(self.SAY_TEMPLATE.format(outfilename=fname, phrase=phrase.replace('\\', '\\\\"').replace('"', '\\"')).encode('utf-8'))
             in_f.seek(0)
             self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
             output = subprocess.check_output(cmd, stdin=in_f, universal_newlines=True).strip()
             if output:
                 self._logger.debug("Output was: '%s'", output)
+        self.play(fname)
+        os.remove(fname)
+
