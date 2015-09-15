@@ -71,7 +71,7 @@ class AbstractTTSEngine(object):
 
         valid_options = self.get_options()
         options = process_options(valid_options, _options, TTSError)
-        print(language, voice, voiceinfo, options)
+        #print(language, voice, voiceinfo, options)
         return language, voice, voiceinfo, options
 
     def say(self, phrase, **options):

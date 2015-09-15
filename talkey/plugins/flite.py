@@ -32,7 +32,7 @@ class FliteTTS(AbstractTTSEngine):
         return {
             'en': {
                 'default': 'kal',
-                'voices': {voice: {} for voice in voices}
+                'voices': dict([(voice, {}) for voice in voices])
             }
         }
 

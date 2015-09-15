@@ -1,8 +1,13 @@
 import os
 import urllib
-import urlparse
 import tempfile
 import requests
+
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
+
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
 from talkey.utils import memoize
 
