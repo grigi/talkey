@@ -120,7 +120,7 @@ class ProcessOptionsTest(unittest.TestCase):
         ret = process_options(spec, {'test': 6.1}, TTSError)
         self.assertEqual(ret, {'test': 6})
 
-    def test_process_options_int(self):
+    def test_process_options_float(self):
         spec = {'test': {'type': 'float', 'min': 5.2, 'max': 8.9}}
         with self.assertRaises(TypeError):
             process_options(spec, {}, TTSError)
