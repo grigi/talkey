@@ -10,6 +10,15 @@ def get_version(fname):
     else:
         raise RuntimeError("Unable to find version string in %s." % (fname,))
 
+def get_requirements():
+    requirements = [
+        'langid',
+        'requests',
+    ]
+    if sys.version_info[0] == 2:
+        requirements.append('subprocess32')
+    return requirements
+
 def get_test_requirements():
     requirements = []
     if sys.version_info[0:2] == (2, 6):
@@ -28,10 +37,7 @@ setup(
     test_suite='talkey.test_suite',
 
     # Dependencies
-    install_requires=[
-        'langid',
-        'requests',
-    ],
+    install_requires=get_requirements(),
     tests_require=get_test_requirements(),
 
     # Packages

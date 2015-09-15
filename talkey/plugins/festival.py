@@ -1,8 +1,7 @@
 import os
-import subprocess
 import tempfile
 import pipes
-from talkey.base import AbstractTTSEngine
+from talkey.base import AbstractTTSEngine, subprocess
 from talkey.utils import check_executable, memoize
 
 

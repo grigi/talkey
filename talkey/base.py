@@ -1,8 +1,13 @@
 import pipes
 import logging
-import subprocess
 import tempfile
 from abc import ABCMeta, abstractmethod
+
+try:
+    import subprocess32 as subprocess
+except ImportError:
+    import subprocess
+
 
 from talkey.utils import process_options, check_executable, memoize
 
