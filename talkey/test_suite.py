@@ -15,12 +15,14 @@ except ImportError:
 LAST_PLAY = None
 
 # Patch AbstractTTSEngine.play to record its params
+# Really need to change this to use Mock.patch
 from talkey.base import AbstractTTSEngine, subprocess
 def fakeplay(self, filename):
     global LAST_PLAY
     output = subprocess.check_output(['file', filename], universal_newlines=True)
     LAST_PLAY = (self, filename, output)
 AbstractTTSEngine.play = fakeplay
+
 
 class CheckExecutableTest(unittest.TestCase):
 
@@ -29,6 +31,7 @@ class CheckExecutableTest(unittest.TestCase):
 
     def test_check_executable_not_found(self):
         self.assertFalse(check_executable('aieaoauu_not-findable_lfsdauybqwer'))
+
 
 class MemoizeTest(unittest.TestCase):
 
@@ -71,6 +74,7 @@ class MemoizeTest(unittest.TestCase):
         self.assertEqual(self.counter, 4)
         self.up_counter()
         self.assertEqual(self.counter, 4)
+
 
 class ProcessOptionsTest(unittest.TestCase):
 
@@ -199,36 +203,23 @@ class DummyTTSTest(BaseTTSTest):
     CLS = DummyTTS
     SLUG = 'dummy-tts'
     INIT_ATTRS = ['enabled']
-    CONF = {
-        'enabled': True,
-    }
-    OBJ_ATTRS = []
+    CONF = {'enabled': True}
     EVAL_PLAY = False
 
 
 class FestivalTTSTest(BaseTTSTest):
     CLS = FestivalTTS
     SLUG = 'festival-tts'
-    INIT_ATTRS = []
-    CONF = {}
-    OBJ_ATTRS = []
-    EVAL_PLAY = True
 
 
 class FliteTTSTest(BaseTTSTest):
     CLS = FliteTTS
     SLUG = 'flite-tts'
-    INIT_ATTRS = []
-    CONF = {}
-    OBJ_ATTRS = []
-    EVAL_PLAY = True
 
 
 class EspeakTTSTest(BaseTTSTest):
     CLS = EspeakTTS
     SLUG = 'espeak-tts'
-    INIT_ATTRS = []
-    CONF = {}
     OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
     EVAL_PLAY = True
 
