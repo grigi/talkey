@@ -2,6 +2,7 @@
 talkey test suite
 '''
 # pylint: disable=W0104
+from os.path import isfile
 from talkey.base import DETECTABLE_LANGS, TTSError
 from talkey.plugins import *
 
@@ -58,6 +59,7 @@ class DummyTTSTest(unittest.TestCase):
             inst, filename, output = LAST_PLAY
             self.assertIn('WAVE audio', output)
             self.assertEqual(inst, obj)
+            self.assertFalse(isfile(filename), 'Tempfile not deleted')
 
 
 class FestivalTTSTest(DummyTTSTest):
