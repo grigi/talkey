@@ -12,6 +12,6 @@ install:
   - pip install coveralls 
   - pip install .
 script:
-  - coverage run --branch --source=configy setup.py -q test
+  - coverage run --branch --source=talkey setup.py -q test
 after_success: 
   - coveralls
