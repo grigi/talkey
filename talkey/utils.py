@@ -41,9 +41,9 @@ def process_options(valid_options, _options, error):
             raise error('Bad type: %s for option %s' % (typ, option), ['int', 'float', 'str', 'enum', 'bool'])
         keys = data.keys()
         if typ == 'int':
-            val = int(val)
+            val = int(float(val))
         if typ == 'float':
-            val = int(val)
+            val = float(val)
         if typ in ['int', 'float']:
             if 'min' in keys:
                 if val < data['min']:
@@ -53,7 +53,7 @@ def process_options(valid_options, _options, error):
                     raise error('Bad %s: %s' % (option, val), 'Max is %s' % data['max'])
         if typ == 'enum':
             if val not in data['values']:
-                raise error('Bad %s: %s' % (option, val), data['values'])
+                raise error('Bad %s value: %s' % (option, val), data['values'])
         if typ == 'bool':
             val = True if str(val).lower() in ['y', '1', 'yes', 'true', 't'] else False
         options[option] = val
