@@ -223,3 +223,7 @@ class EspeakTTSTest(BaseTTSTest):
     OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
     EVAL_PLAY = True
 
+class PicoTTSTest(BaseTTSTest):
+    CLS = PicoTTS
+    SLUG = 'pico-tts'
+

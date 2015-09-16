@@ -30,8 +30,6 @@ class FestivalTTS(AbstractTTSEngine):
             with tempfile.SpooledTemporaryFile() as in_f:
                 self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
                 output = subprocess.check_output(cmd, stdin=in_f, stderr=subprocess.STDOUT, universal_newlines=True).strip()
-                if output:
-                    self._logger.debug("Output was: '%s'", output)
                 return 'No default voice found' not in output
         return False
 
