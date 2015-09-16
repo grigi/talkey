@@ -1,12 +1,12 @@
 import os
-import urllib
 import tempfile
 import requests
 
 try:
-    import urlparse
+    from urlparse import urlunsplit
+    from urllib import urlencode
 except ImportError:
-    import urllib.parse as urlparse
+    from urllib.parse import urlunsplit, urlencode
 
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
 from talkey.utils import memoize
@@ -44,9 +44,9 @@ class MaryTTS(AbstractTTSEngine):
         }
 
     def _makeurl(self, path, query={}):
-        query_s = urllib.urlencode(query)
+        query_s = urlencode(query)
         urlparts = ('http', self.ioptions['host'] + ':' + str(self.ioptions['port']), path, query_s, '')
-        return urlparse.urlunsplit(urlparts)
+        return urlunsplit(urlparts)
 
     @memoize
     def is_available(self):
