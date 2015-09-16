@@ -45,7 +45,7 @@ class MaryTTS(AbstractTTSEngine):
 
     def _makeurl(self, path, query={}):
         query_s = urlencode(query)
-        urlparts = ('http', self.ioptions['host'] + ':' + str(self.ioptions['port']), path, query_s, '')
+        urlparts = (self.ioptions['scheme'], self.ioptions['host'] + ':' + str(self.ioptions['port']), path, query_s, '')
         return urlunsplit(urlparts)
 
     @memoize

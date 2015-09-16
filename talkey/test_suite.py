@@ -107,10 +107,6 @@ class ProcessOptionsTest(unittest.TestCase):
         spec = {'test': {'type': 'int', 'min': 5, 'max': 8}}
         with self.assertRaises(TypeError):
             process_options(spec, {}, TTSError)
-        with self.assertRaisesRegexp(TTSError, 'Min is 5'):
-            process_options(spec, {'test': 3}, TTSError)
-        with self.assertRaisesRegexp(TTSError, 'Max is 8'):
-            process_options(spec, {'test': 10}, TTSError)
         ret = process_options(spec, {'test': '6'}, TTSError)
         self.assertEqual(ret, {'test': 6})
         ret = process_options(spec, {'test': '6.2'}, TTSError)
@@ -120,14 +116,20 @@ class ProcessOptionsTest(unittest.TestCase):
         ret = process_options(spec, {'test': 6.1}, TTSError)
         self.assertEqual(ret, {'test': 6})
 
+    def test_process_options_int_min(self):
+        with self.assertRaisesRegexp(TTSError, 'Min is 5'):
+            process_options({'test': {'type': 'int', 'min': 5}}, {'test': 3}, TTSError)
+        process_options({'test': {'type': 'int'}}, {'test': 3}, TTSError)
+
+    def test_process_options_int_max(self):
+        with self.assertRaisesRegexp(TTSError, 'Max is 8'):
+            process_options({'test': {'type': 'int', 'max': 8}}, {'test': 10}, TTSError)
+        process_options({'test': {'type': 'int'}}, {'test': 10}, TTSError)
+
     def test_process_options_float(self):
         spec = {'test': {'type': 'float', 'min': 5.2, 'max': 8.9}}
         with self.assertRaises(TypeError):
             process_options(spec, {}, TTSError)
-        with self.assertRaisesRegexp(TTSError, 'Min is 5.2'):
-            process_options(spec, {'test': 3}, TTSError)
-        with self.assertRaisesRegexp(TTSError, 'Max is 8.9'):
-            process_options(spec, {'test': 10}, TTSError)
         ret = process_options(spec, {'test': '6'}, TTSError)
         self.assertEqual(ret, {'test': 6.0})
         ret = process_options(spec, {'test': '6.2'}, TTSError)
@@ -136,6 +138,16 @@ class ProcessOptionsTest(unittest.TestCase):
         self.assertEqual(ret, {'test': 6.0})
         ret = process_options(spec, {'test': 6.1}, TTSError)
         self.assertEqual(ret, {'test': 6.1})
+
+    def test_process_options_float_min(self):
+        with self.assertRaisesRegexp(TTSError, 'Min is 5.2'):
+            process_options({'test': {'type': 'float', 'min': 5.2}}, {'test': 3}, TTSError)
+        process_options({'test': {'type': 'float'}}, {'test': 3}, TTSError)
+
+    def test_process_options_float_max(self):
+        with self.assertRaisesRegexp(TTSError, 'Max is 8.9'):
+            process_options({'test': {'type': 'float', 'max': 8.9}}, {'test': 10}, TTSError)
+        process_options({'test': {'type': 'float'}}, {'test': 10}, TTSError)
 
     def test_process_options_enum(self):
         spec = {'test': {'type': 'enum', 'values': ['one', 'two', 'four']}}
@@ -165,16 +177,17 @@ class BaseTTSTest(unittest.TestCase):
             raise unittest.SkipTest()
 
     def setUp(self):
-        if not self.CLS:
-            raise unittest.SkipTest()
-
         global LAST_PLAY
         LAST_PLAY = None
+
+        # Stupid py2.6, Grrr
+        if not self.CLS:
+            raise unittest.SkipTest()
 
     def skip_not_available(self):
         if self.SKIP_IF_NOT_AVAILABLE and not self.CLS(**self.CONF).is_available():
             # Skip networked engines if not available to prevent spurious failiures
-            raise unittest.SkipTest()
+            raise unittest.SkipTest()  # pragma: no cover
 
     def test_class_init_options(self):
         cls = self.CLS
@@ -214,6 +227,18 @@ class DummyTTSTest(BaseTTSTest):
     INIT_ATTRS = ['enabled']
     CONF = {'enabled': True}
     EVAL_PLAY = False
+
+    def test_configure_not_available(self):
+        with self.assertRaisesRegexp(TTSError, 'Not available'):
+            self.CLS(enabled=False).configure()
+
+    def test_configure_bad_language(self):
+        with self.assertRaisesRegexp(TTSError, 'Bad language'):
+            self.CLS(enabled=True).configure(language='bad')
+
+    def test_configure_bad_voice(self):
+        with self.assertRaisesRegexp(TTSError, 'Bad voice'):
+            self.CLS(enabled=True).configure(voice='bad')
 
 
 class FestivalTTSTest(BaseTTSTest):

@@ -31,7 +31,7 @@ class FestivalTTS(AbstractTTSEngine):
                 self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
                 output = subprocess.check_output(cmd, stdin=in_f, stderr=subprocess.STDOUT, universal_newlines=True).strip()
                 return 'No default voice found' not in output
-        return False
+        return False  # pragma: no cover
 
     def get_options(self):
         return {}

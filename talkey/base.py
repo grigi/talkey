@@ -39,7 +39,7 @@ class AbstractTTSEngine(object):
     @classmethod
     @abstractmethod
     def get_init_options(cls):
-        pass
+        pass  # pragma: no cover
 
     def __init__(self, **_options):
         self._logger = logging.getLogger(__name__)
@@ -51,15 +51,15 @@ class AbstractTTSEngine(object):
 
     @abstractmethod
     def is_available(self):
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_options(self):
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_languages(self, detectable=True):
-        pass
+        pass  # pragma: no cover
 
     def configure(self, language='en', voice=None, **_options):
         if not (self.has_audio_output() and self.is_available()):
@@ -85,9 +85,9 @@ class AbstractTTSEngine(object):
 
     @abstractmethod
     def _say(self, phrase, language, voice, voiceinfo, options):
-        pass
+        pass  # pragma: no cover
 
-    def play(self, filename):
+    def play(self, filename): # pragma: no cover 
         # FIXME: Use platform-independent and async audio-output here
         # PyAudio looks most promising, too bad about:
         #  --allow-external PyAudio --allow-unverified PyAudio
