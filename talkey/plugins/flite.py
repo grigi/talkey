@@ -46,8 +46,6 @@ class FliteTTS(AbstractTTSEngine):
             fname = f.name
         cmd.append(fname)
         self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
-        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, universal_newlines=True).strip()
-        if output:
-            self._logger.debug("Output was: '%s'", output)
+        subprocess.call(cmd)
         self.play(fname)
         os.remove(fname)

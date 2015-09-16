@@ -52,9 +52,7 @@ class FestivalTTS(AbstractTTSEngine):
             in_f.write(self.SAY_TEMPLATE.format(outfilename=fname, phrase=phrase.replace('\\', '\\\\"').replace('"', '\\"')).encode('utf-8'))
             in_f.seek(0)
             self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
-            output = subprocess.check_output(cmd, stdin=in_f, universal_newlines=True).strip()
-            if output:
-                self._logger.debug("Output was: '%s'", output)
+            subprocess.call(cmd, stdin=in_f)
         self.play(fname)
         os.remove(fname)
 

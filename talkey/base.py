@@ -93,9 +93,4 @@ class AbstractTTSEngine(object):
         #  --allow-external PyAudio --allow-unverified PyAudio
         cmd = ['aplay', str(filename)]
         self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
-        with tempfile.TemporaryFile() as f:
-            subprocess.call(cmd, stdout=f, stderr=f)
-            f.seek(0)
-            output = f.read()
-            if output:
-                self._logger.debug("Output was: '%s'", output)
+        subprocess.call(cmd)
