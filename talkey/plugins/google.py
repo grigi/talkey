@@ -1,10 +1,13 @@
 import os
 import tempfile
 
-import gtts
+try:
+    import gtts
+except ImportError:  # pragma: no cover
+    pass
 
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
-from talkey.utils import memoize
+from talkey.utils import memoize, check_network_connection, check_python_import
 
 
 class GoogleTTS(AbstractTTSEngine):
@@ -19,8 +22,12 @@ class GoogleTTS(AbstractTTSEngine):
     def get_init_options(cls):
         return {}
 
+    @memoize
     def is_available(self):
-        return True
+        return (
+            check_python_import('gtts')
+            and check_network_connection('translate.google.com', 80)
+        )
 
     def get_options(self):
         return {}

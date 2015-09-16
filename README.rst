@@ -12,7 +12,7 @@ Simple Test-To-Speech (TTS) interface library with multi-language and multi-engi
 Rationale
 =========
 
-I was really intruiqued by the concept of jasper, a voice-controlled interface.
+I was really intrigued by the concept of jasper, a voice-controlled interface.
 I needed it to be multi-lingual like me, so this library is my attempt to make having the
 TTS engines multi-lingual. A lot of this code is based of code from the Jasper project,
 just refactored to fit purpose and to be testable.

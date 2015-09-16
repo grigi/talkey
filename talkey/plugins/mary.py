@@ -9,7 +9,7 @@ except ImportError:
     from urllib.parse import urlunsplit, urlencode
 
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
-from talkey.utils import memoize
+from talkey.utils import memoize, check_network_connection
 
 
 class MaryTTS(AbstractTTSEngine):
@@ -50,13 +50,7 @@ class MaryTTS(AbstractTTSEngine):
 
     @memoize
     def is_available(self):
-        try:
-            res = requests.get(self._makeurl('version'))
-            if res.status_code == 200 and 'Mary TTS' in res.text:
-                return True
-        except requests.ConnectionError:
-            pass
-        return False
+        return check_network_connection(self.ioptions['host'], self.ioptions['port'])
 
     def get_options(self):
         return {}

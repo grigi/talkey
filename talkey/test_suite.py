@@ -258,9 +258,18 @@ class EspeakTTSTest(BaseTTSTest):
     OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
     EVAL_PLAY = True
 
+    def test_get_languages_options(self):
+        qtdt = self.CLS().get_languages()
+        qfdt = self.CLS().get_languages(quality=False)
+        qfdf = self.CLS().get_languages(quality=False, detectable=False)
+
+        assert len(qfdf.keys()) > len(qfdt.keys()) > len(qtdt.keys())
+
+
 class PicoTTSTest(BaseTTSTest):
     CLS = PicoTTS
     SLUG = 'pico-tts'
+
 
 class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
@@ -269,6 +278,7 @@ class MaryTTSTest(BaseTTSTest):
     CONF = {'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
+
 
 class GoogleTTSTest(BaseTTSTest):
     CLS = GoogleTTS

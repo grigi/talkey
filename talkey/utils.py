@@ -1,7 +1,9 @@
 # -*- coding: utf-8-*-
 import sys
 import logging
+import socket
 import functools
+import pkgutil
 if sys.version_info < (3, 3):
     from distutils.spawn import find_executable  # pylint: disable=E0611
 else:
@@ -24,6 +26,53 @@ def check_executable(executable):
         logger.debug("Executable '%s' found: '%s'", executable, executable_path)
     else:
         logger.debug("Executable '%s' not found", executable)
+    return found
+
+
+def check_network_connection(server, port):
+    """
+    Checks if jasper can connect a network server.
+    Arguments:
+        server -- (optional) the server to connect with (Default:
+                  "www.google.com")
+    Returns:
+        True or False
+    """
+    logger = logging.getLogger(__name__)
+    logger.debug("Checking network connection to server '%s'...", server)
+    try:
+        # see if we can resolve the host name -- tells us if there is
+        # a DNS listening
+        host = socket.gethostbyname(server)
+        # connect to the host -- tells us if the host is actually
+        # reachable
+        sock = socket.create_connection((host, port), 2)
+        sock.close()
+    except Exception:  # pragma: no cover
+        logger.debug("Network connection not working")
+        return False
+    logger.debug("Network connection working")
+    return True
+
+
+def check_python_import(package_or_module):
+    """
+    Checks if a python package or module is importable.
+    Arguments:
+        package_or_module -- the package or module name to check
+    Returns:
+        True or False
+    """
+    logger = logging.getLogger(__name__)
+    logger.debug("Checking python import '%s'...", package_or_module)
+    loader = pkgutil.get_loader(package_or_module)
+    found = loader is not None
+    if found:
+        logger.debug("Python %s '%s' found",
+                     "package" if loader.is_package(package_or_module)
+                     else "module", package_or_module)
+    else:  # pragma: no cover
+        logger.debug("Python import '%s' not found", package_or_module)
     return found
 
 
