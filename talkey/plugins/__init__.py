@@ -4,3 +4,4 @@ from .flite import FliteTTS
 from .espeak import EspeakTTS
 from .mary import MaryTTS
 from .pico import PicoTTS
+from .google import GoogleTTS

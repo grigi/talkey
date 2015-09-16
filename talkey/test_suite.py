@@ -17,7 +17,7 @@ LAST_PLAY = None
 # Patch AbstractTTSEngine.play to record its params
 # Really need to change this to use Mock.patch
 from talkey.base import AbstractTTSEngine, subprocess
-def fakeplay(self, filename):
+def fakeplay(self, filename, translate=False):
     global LAST_PLAY
     output = subprocess.check_output(['file', filename], universal_newlines=True)
     LAST_PLAY = (self, filename, output)
@@ -170,6 +170,7 @@ class BaseTTSTest(unittest.TestCase):
     OBJ_ATTRS = []
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = False
+    FILE_TYPE = 'WAVE audio'
 
     @classmethod
     def setUpClass(cls):
@@ -216,7 +217,7 @@ class BaseTTSTest(unittest.TestCase):
         obj.say('Cows go moo')
         if self.EVAL_PLAY:
             inst, filename, output = LAST_PLAY
-            self.assertIn('WAVE audio', output)
+            self.assertIn(self.FILE_TYPE, output)
             self.assertEqual(inst, obj)
             self.assertFalse(isfile(filename), 'Tempfile not deleted')
 
@@ -268,3 +269,9 @@ class MaryTTSTest(BaseTTSTest):
     CONF = {'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
+
+class GoogleTTSTest(BaseTTSTest):
+    CLS = GoogleTTS
+    SLUG = 'google-tts'
+    FILE_TYPE = 'MPEG ADTS, layer III'
+

@@ -1,3 +1,4 @@
+import os
 import pipes
 import logging
 import tempfile
@@ -12,6 +13,9 @@ except ImportError:
 from talkey.utils import process_options, check_executable, memoize
 
 import langid
+import contextlib
+import audioread
+import wave
 
 # Get the list of identifiable languages
 DETECTABLE_LANGS = sorted([a[0] for a in langid.rank('')])
@@ -87,10 +91,25 @@ class AbstractTTSEngine(object):
     def _say(self, phrase, language, voice, voiceinfo, options):
         pass  # pragma: no cover
 
-    def play(self, filename): # pragma: no cover 
+    def play(self, filename, translate=False): # pragma: no cover
         # FIXME: Use platform-independent and async audio-output here
         # PyAudio looks most promising, too bad about:
         #  --allow-external PyAudio --allow-unverified PyAudio
+        if translate:
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
+                fname = f.name
+            with audioread.audio_open(filename) as f:
+                with contextlib.closing(wave.open(fname, 'w')) as of:
+                    of.setnchannels(f.channels)
+                    of.setframerate(f.samplerate)
+                    of.setsampwidth(2)
+                    for buf in f:
+                        of.writeframes(buf)
+            filename = fname
+
         cmd = ['aplay', str(filename)]
         self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
         subprocess.call(cmd)
+
+        if translate:
+            os.remove(fname)

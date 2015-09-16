@@ -14,13 +14,16 @@ def get_requirements():
     requirements = [
         'langid',
         'requests',
+        'audioread',
     ]
     if sys.version_info[0] == 2:
         requirements.append('subprocess32')
     return requirements
 
 def get_test_requirements():
-    requirements = []
+    requirements = [
+        'gtts',
+    ]
     if sys.version_info[0:2] == (2, 6):
         requirements.append('unittest2')
     return requirements
