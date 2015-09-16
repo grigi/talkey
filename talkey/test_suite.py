@@ -157,6 +157,7 @@ class BaseTTSTest(unittest.TestCase):
     CONF = {}
     OBJ_ATTRS = []
     EVAL_PLAY = True
+    SKIP_IF_NOT_AVAILABLE = False
 
     @classmethod
     def setUpClass(cls):
@@ -170,18 +171,25 @@ class BaseTTSTest(unittest.TestCase):
         global LAST_PLAY
         LAST_PLAY = None
 
+    def skip_not_available(self):
+        if self.SKIP_IF_NOT_AVAILABLE and not self.CLS(**self.CONF).is_available():
+            # Skip networked engines if not available to prevent spurious failiures
+            raise unittest.SkipTest()
+
     def test_class_init_options(self):
         cls = self.CLS
         self.assertEqual(cls.SLUG, self.SLUG)
         self.assertEqual(sorted(cls.get_init_options().keys()), sorted(self.INIT_ATTRS))
 
     def test_class_instantiation(self):
+        self.skip_not_available()
         obj = self.CLS(**self.CONF)
         self.assertEqual(obj.SLUG, self.SLUG)
         self.assertEqual(obj.is_available(), True)
         self.assertEqual(sorted(obj.get_options().keys()), sorted(self.OBJ_ATTRS))
 
     def test_class_configure(self):
+        self.skip_not_available()
         obj = self.CLS(**self.CONF)
         language, voice, voiceinfo, options = obj.configure()
         self.assertEqual(language, 'en')
@@ -190,6 +198,7 @@ class BaseTTSTest(unittest.TestCase):
         self.assertEqual(sorted(options.keys()), sorted(self.OBJ_ATTRS))
 
     def test_class_say(self):
+        self.skip_not_available()
         obj = self.CLS(**self.CONF)
         obj.say('Cows go moo')
         if self.EVAL_PLAY:
@@ -227,3 +236,10 @@ class PicoTTSTest(BaseTTSTest):
     CLS = PicoTTS
     SLUG = 'pico-tts'
 
+class MaryTTSTest(BaseTTSTest):
+    CLS = MaryTTS
+    SLUG = 'mary-tts'
+    INIT_ATTRS = ['host', 'port', 'scheme']
+    CONF = {'host': 'mary.dfki.de'}
+    EVAL_PLAY = True
+    SKIP_IF_NOT_AVAILABLE = True
