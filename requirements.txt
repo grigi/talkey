@@ -1,8 +1,8 @@
 # talkey
-configy
+langid
+requests
 
 # What follows here is just for testing or code grading:
 tox
 pylint
 coverage
-
