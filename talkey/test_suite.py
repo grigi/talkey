@@ -239,7 +239,7 @@ class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
     SLUG = 'mary-tts'
     INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
-    CONF = {'host': 'mary.dfki.de'}
+    CONF = {'enabled': True, 'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
 

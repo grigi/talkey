@@ -79,16 +79,16 @@ class AbstractTTSEngine(object):
         self.ioptions = process_options(self.__class__.get_init_options(), _options, TTSError)
 
         # Pre-caching potentially slow results
-        self.language = None
-        self.voice = None
-        self.options = {}
+        self.default_language = 'en'
+        self.languages_options = {}
+        self.default_options = {}
         self.optionspec = None
         self.languages = None
         self.available = self.is_available()
         if self.available:
             self.optionspec = self.get_options()
             self.languages = self.get_languages()
-            self.configure()
+            self.configure_default()
 
     def is_available(self):
         return (
@@ -111,11 +111,18 @@ class AbstractTTSEngine(object):
         self._assert_available()
         return self._get_languages()
 
+    def _get_language_options(self, language):
+        if language in self.languages_options.keys():
+            return self.languages_options[language]
+        return None, {}
+
+
     def _configure(self, language=None, voice=None, **_options):
         self._assert_available()
 
-        language = language or self.language or 'en'
-        voice = voice or self.voice
+        language = language or self.default_language
+        lang_voice, lang_options = self._get_language_options(language)
+        voice = voice or lang_voice
 
         if language not in self.languages.keys():
             raise TTSError('Bad language: %s' % language, self.languages.keys())
@@ -125,13 +132,19 @@ class AbstractTTSEngine(object):
             raise TTSError('Bad voice: %s' % voice, self.languages[language]['voices'].keys())
         voiceinfo = self.languages[language]['voices'][voice]
 
-        newopts = self.options
-        newopts.update(_options)
-        options = process_options(self.optionspec, newopts, TTSError)
+        lang_options.update(_options)
+        options = process_options(self.optionspec, lang_options, TTSError)
         return language, voice, voiceinfo, options
 
+    def configure_default(self, **_options):
+        language, voice, voiceinfo, options = self._configure(**_options)
+        self.languages_options[language] = (voice, options)
+        self.default_language = language
+        self.default_options = options
+
     def configure(self, **_options):
-        self.language, self.voice, voiceinfo, self.options = self._configure(**_options)
+        language, voice, voiceinfo, options = self._configure(**_options)
+        self.languages_options[language] = (voice, options)
 
     def say(self, phrase, **_options):
         language, voice, voiceinfo, options = self._configure(**_options)

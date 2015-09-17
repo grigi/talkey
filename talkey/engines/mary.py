@@ -26,6 +26,10 @@ class MaryTTS(AbstractTTSEngine):
     @classmethod
     def _get_init_options(cls):
         return {
+            'enabled': {
+                'type': 'bool',
+                'default': False,
+            },
             'scheme': {
                 'type': 'str',
                 'default': 'http',

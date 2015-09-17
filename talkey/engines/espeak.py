@@ -76,7 +76,7 @@ class EspeakTTS(AbstractTTSEngine):
         def fix_voice(voice):
             'Work-around bug in eSpeak 1.46 where gender is sometimes missing'
             if voice[2] not in ['M', 'F', '-']:
-                return voice[:2] + ['-'] + voice[2:]
+                return voice[:2] + ['-'] + voice[2:]  # pragma: no cover
             return voice
 
         output = subprocess.check_output([self.ioptions['espeak'], '--voices'], universal_newlines=True)

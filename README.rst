@@ -26,3 +26,46 @@ Install from pypi:
 
     pip install talkey
 
+At its simplest use case:
+
+.. code-block:: python
+
+    import talkey
+    talkey.configure()
+    talkey.say('Old McDonald had a farm')
+
+But for best results you should configure it:
+
+.. code-block:: python
+
+    CONF = {
+        # These languages are given better scoring by the language detector
+        # to minimise the chance of it detecting a short string completely incorrectly.
+        # Order is not important here
+        'preferred_languages': [
+            'en',
+            'af',
+            'el',
+            'fr',
+        ],
+        # Here you segment the configuration by engine
+        'espeak-tts': {
+            # Specify some engine defaults (globally)
+            'defaults': {
+                    'words_per_minute': 150,
+                    'variant': 'f4',
+            },
+            # Here you specify language-specific configuration
+            # e.g. for english we prefer the mbrola en1 voice
+            'languages': {
+                'en': {
+                    'voice': 'english-mb-en1',
+                    'words_per_minute': 130
+                },
+            }
+        }
+    }
+
+    import talkey
+    talkey.configure(CONF)
+    talkey.say('Old McDonald had a farm')
