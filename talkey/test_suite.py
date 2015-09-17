@@ -4,7 +4,7 @@ talkey test suite
 # pylint: disable=W0104
 from os.path import isfile
 from talkey.base import DETECTABLE_LANGS, TTSError
-from talkey.plugins import *
+from talkey.engines import *
 from talkey.utils import check_executable, process_options
 
 try:
@@ -152,8 +152,8 @@ class BaseTTSTest(unittest.TestCase):
         self.assertEqual(cls.SLUG, self.SLUG)
         self.assertEqual(sorted(cls.get_init_options().keys()), sorted(self.INIT_ATTRS))
 
-    def test_configure_not_available(self):
-        with self.assertRaisesRegexp(TTSError, 'Not available'):
+    def test_configure_not_enabled(self):
+        with self.assertRaisesRegexp(TTSError, 'Not enabled'):
             self.CLS(enabled=False).configure()
 
     def test_class_instantiation(self):

@@ -98,6 +98,8 @@ class AbstractTTSEngine(object):
         )
 
     def _assert_available(self):
+        if not self.ioptions['enabled']:
+            raise TTSError('Not enabled')
         if not self.available:
             raise TTSError('Not available')
 
