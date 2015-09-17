@@ -69,18 +69,31 @@ class EspeakTTS(AbstractTTSEngine):
             },
         }
 
+
     def _get_languages(self):
+        'Get all working voices and languages for eSpeak'
+
+        def fix_voice(voice):
+            'Work-around bug in eSpeak 1.46 where gender is sometimes missing'
+            if voice[2] not in ['M', 'F', '-']:
+                return voice[:1] + ['-'] + voice[2:]
+            return voice
+
         output = subprocess.check_output([self.ioptions['espeak'], '--voices'], universal_newlines=True)
-        voices = [['e']+row.split()[:4] for row in output.split('\n')[1:] if row]
+        voices = [['espeak']+fix_voice(row.split())[:4] for row in output.split('\n')[1:] if row]
+
+        for voice in voices:
+            if voice[3] not in ['M', 'F', '-']:
+                voice
 
         if self.has_mbrola():
             output = subprocess.check_output([self.ioptions['espeak'], '--voices=mbrola'], universal_newlines=True)
-            mvoices = [row.split()[:5] for row in output.split('\n')[1:] if row]
+            mvoices = [fix_voice(row.split())[:5] for row in output.split('\n')[1:] if row]
             for mvoice in mvoices:
                 mbfile = mvoice[4].split('-')[1]
                 mbfile = os.path.join(self.ioptions['mbrola_voices'], mbfile, mbfile)
                 if os.path.isfile(mbfile):
-                    voices.append(['m']+ mvoice)
+                    voices.append(['mbrola']+ mvoice)
 
         langs = set([voice[2].split('-')[0] for voice in voices])
         if self.ioptions['passable_only']:
@@ -101,7 +114,7 @@ class EspeakTTS(AbstractTTSEngine):
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             fname = f.name
         vce = voice
-        if voiceinfo['type'] == 'e' and options['variant']:
+        if voiceinfo['type'] == 'espeak' and options['variant']:
             vce += '+' + options['variant']
         cmd = [
             self.ioptions['espeak'],
