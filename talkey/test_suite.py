@@ -221,6 +221,14 @@ class EspeakTTSTest(BaseTTSTest):
         paf = self.CLS(passable_only=False).get_languages()
         assert len(paf.keys()) > len(pat.keys())
 
+    def test_mbrola_language(self):
+        obj = self.CLS(**self.CONF)
+        obj.say('Cows go moo', voice='english-mb-en1')
+        inst, filename, output = LAST_PLAY
+        self.assertIn(self.FILE_TYPE, output)
+        self.assertEqual(inst, obj)
+        self.assertFalse(isfile(filename), 'Tempfile not deleted')
+
 
 class PicoTTSTest(BaseTTSTest):
     CLS = PicoTTS
