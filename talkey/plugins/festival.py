@@ -2,7 +2,7 @@ import os
 import tempfile
 import pipes
 from talkey.base import AbstractTTSEngine, subprocess
-from talkey.utils import check_executable, memoize
+from talkey.utils import check_executable
 
 
 class FestivalTTS(AbstractTTSEngine):
@@ -20,11 +20,10 @@ class FestivalTTS(AbstractTTSEngine):
 """
 
     @classmethod
-    def get_init_options(cls):
+    def _get_init_options(cls):
         return {}
 
-    @memoize
-    def is_available(self):
+    def _is_available(self):
         if check_executable('festival'):
             cmd = ['festival', '--pipe']
             with tempfile.SpooledTemporaryFile() as in_f:
@@ -33,10 +32,10 @@ class FestivalTTS(AbstractTTSEngine):
                 return 'No default voice found' not in output
         return False  # pragma: no cover
 
-    def get_options(self):
+    def _get_options(self):
         return {}
 
-    def get_languages(self, detectable=True):
+    def _get_languages(self, detectable=True):
         return {
             'en': {'default': 'en', 'voices': {'en': {}}}
         }

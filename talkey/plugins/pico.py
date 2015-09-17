@@ -3,7 +3,7 @@ import re
 import tempfile
 import pipes
 from talkey.base import AbstractTTSEngine, subprocess
-from talkey.utils import check_executable, memoize
+from talkey.utils import check_executable
 
 class PicoTTS(AbstractTTSEngine):
     """
@@ -14,18 +14,16 @@ class PicoTTS(AbstractTTSEngine):
     SLUG = "pico-tts"
 
     @classmethod
-    def get_init_options(cls):
+    def _get_init_options(cls):
         return {}
 
-    @memoize
-    def is_available(self):
+    def _is_available(self):
         return check_executable('pico2wave')
 
-    def get_options(self):
+    def _get_options(self):
         return {}
 
-    @memoize
-    def get_languages(self, detectable=True):
+    def _get_languages(self, detectable=True):
         cmd = ['pico2wave', '-l', 'NULL', '-w', os.devnull]
         with tempfile.SpooledTemporaryFile() as f:
             subprocess.call(cmd, stderr=f)

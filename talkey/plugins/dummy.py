@@ -10,7 +10,7 @@ class DummyTTS(AbstractTTSEngine):
     SLUG = "dummy-tts"
 
     @classmethod
-    def get_init_options(cls):
+    def _get_init_options(cls):
         return {
             'enabled': {
                 'type': 'bool',
@@ -18,13 +18,13 @@ class DummyTTS(AbstractTTSEngine):
             },
         }
 
-    def is_available(self):
-        return self.ioptions['enabled']
+    def _is_available(self):
+        return True
 
-    def get_options(self):
+    def _get_options(self):
         return {}
 
-    def get_languages(self, detectable=True):
+    def _get_languages(self):
         return dict([
             (lang, {'default': lang, 'voices': {lang: {}}})
             for lang in DETECTABLE_LANGS

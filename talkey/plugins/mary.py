@@ -9,7 +9,7 @@ except ImportError:
     from urllib.parse import urlunsplit, urlencode
 
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
-from talkey.utils import memoize, check_network_connection
+from talkey.utils import check_network_connection
 
 
 class MaryTTS(AbstractTTSEngine):
@@ -24,8 +24,7 @@ class MaryTTS(AbstractTTSEngine):
     SLUG = "mary-tts"
 
     @classmethod
-    @memoize
-    def get_init_options(cls):
+    def _get_init_options(cls):
         return {
             'scheme': {
                 'type': 'str',
@@ -48,15 +47,13 @@ class MaryTTS(AbstractTTSEngine):
         urlparts = (self.ioptions['scheme'], self.ioptions['host'] + ':' + str(self.ioptions['port']), path, query_s, '')
         return urlunsplit(urlparts)
 
-    @memoize
-    def is_available(self):
+    def _is_available(self):
         return check_network_connection(self.ioptions['host'], self.ioptions['port'])
 
-    def get_options(self):
+    def _get_options(self):
         return {}
 
-    @memoize
-    def get_languages(self, detectable=True):
+    def _get_languages(self, detectable=True):
         res = requests.get(self._makeurl('voices')).text
         langs = {}
         for voice in [row.split() for row in res.split('\n') if row]:

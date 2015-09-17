@@ -5,7 +5,7 @@ talkey test suite
 from os.path import isfile
 from talkey.base import DETECTABLE_LANGS, TTSError
 from talkey.plugins import *
-from talkey.utils import check_executable, process_options, memoize
+from talkey.utils import check_executable, process_options
 
 try:
     import unittest2 as unittest  # pylint: disable=F0401
@@ -31,49 +31,6 @@ class CheckExecutableTest(unittest.TestCase):
 
     def test_check_executable_not_found(self):
         self.assertFalse(check_executable('aieaoauu_not-findable_lfsdauybqwer'))
-
-
-class MemoizeTest(unittest.TestCase):
-
-    def setUp(self):
-        self.counter = 0
-
-    @memoize
-    def up_counter(self, *args, **kwargs):
-        self.counter += 1
-        return self.counter
-
-    def test_memoize_no_call(self):
-        self.assertEqual(self.counter, 0)
-
-    def test_memoize_call_blank(self):
-        self.up_counter()
-        self.assertEqual(self.counter, 1)
-        self.up_counter()
-        self.assertEqual(self.counter, 1)
-
-    def test_memoize_call_params(self):
-        self.up_counter()
-        self.up_counter(1,2)
-        self.assertEqual(self.counter, 2)
-        self.up_counter(1,2)
-        self.assertEqual(self.counter, 2)
-        self.up_counter()
-        self.assertEqual(self.counter, 2)
-
-    def test_memoize_call_keywords(self):
-        self.up_counter()
-        self.up_counter(1,2)
-        self.up_counter(1,2, word=3)
-        self.assertEqual(self.counter, 3)
-        self.up_counter(1,2, word=4)
-        self.assertEqual(self.counter, 4)
-        self.up_counter(1,2, word=3)
-        self.assertEqual(self.counter, 4)
-        self.up_counter(1,2)
-        self.assertEqual(self.counter, 4)
-        self.up_counter()
-        self.assertEqual(self.counter, 4)
 
 
 class ProcessOptionsTest(unittest.TestCase):
@@ -165,7 +122,7 @@ class BaseTTSTest(unittest.TestCase):
     '''
     CLS = None
     SLUG = None
-    INIT_ATTRS = []
+    INIT_ATTRS = ['enabled']
     CONF = {}
     OBJ_ATTRS = []
     EVAL_PLAY = True
@@ -194,6 +151,10 @@ class BaseTTSTest(unittest.TestCase):
         cls = self.CLS
         self.assertEqual(cls.SLUG, self.SLUG)
         self.assertEqual(sorted(cls.get_init_options().keys()), sorted(self.INIT_ATTRS))
+
+    def test_configure_not_available(self):
+        with self.assertRaisesRegexp(TTSError, 'Not available'):
+            self.CLS(enabled=False).configure()
 
     def test_class_instantiation(self):
         self.skip_not_available()
@@ -229,10 +190,6 @@ class DummyTTSTest(BaseTTSTest):
     CONF = {'enabled': True}
     EVAL_PLAY = False
 
-    def test_configure_not_available(self):
-        with self.assertRaisesRegexp(TTSError, 'Not available'):
-            self.CLS(enabled=False).configure()
-
     def test_configure_bad_language(self):
         with self.assertRaisesRegexp(TTSError, 'Bad language'):
             self.CLS(enabled=True).configure(language='bad')
@@ -255,15 +212,14 @@ class FliteTTSTest(BaseTTSTest):
 class EspeakTTSTest(BaseTTSTest):
     CLS = EspeakTTS
     SLUG = 'espeak-tts'
+    INIT_ATTRS = ['enabled', 'espeak', 'mbrola', 'mbrola_voices', 'passable_only']
     OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
     EVAL_PLAY = True
 
     def test_get_languages_options(self):
-        qtdt = self.CLS().get_languages()
-        qfdt = self.CLS().get_languages(quality=False)
-        qfdf = self.CLS().get_languages(quality=False, detectable=False)
-
-        assert len(qfdf.keys()) > len(qfdt.keys()) > len(qtdt.keys())
+        pat = self.CLS(passable_only=True).get_languages()
+        paf = self.CLS(passable_only=False).get_languages()
+        assert len(paf.keys()) > len(pat.keys())
 
 
 class PicoTTSTest(BaseTTSTest):
@@ -274,7 +230,7 @@ class PicoTTSTest(BaseTTSTest):
 class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
     SLUG = 'mary-tts'
-    INIT_ATTRS = ['host', 'port', 'scheme']
+    INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
     CONF = {'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
@@ -283,5 +239,8 @@ class MaryTTSTest(BaseTTSTest):
 class GoogleTTSTest(BaseTTSTest):
     CLS = GoogleTTS
     SLUG = 'google-tts'
+    CONF = {'enabled': True}
     FILE_TYPE = 'MPEG ADTS, layer III'
+    SKIP_IF_NOT_AVAILABLE = True
+
 

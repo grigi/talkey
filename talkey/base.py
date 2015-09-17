@@ -10,7 +10,7 @@ except ImportError:
     import subprocess
 
 
-from talkey.utils import process_options, check_executable, memoize
+from talkey.utils import process_options, check_executable
 
 import langid
 import contextlib
@@ -40,56 +40,89 @@ class AbstractTTSEngine(object):
     """
     __metaclass__ = ABCMeta
 
+    # Define these in your engine
     @classmethod
     @abstractmethod
-    def get_init_options(cls):
+    def _get_init_options(cls):
         pass  # pragma: no cover
 
+    @abstractmethod
+    def _is_available(self):
+        pass  # pragma: no cover
+
+    @abstractmethod
+    def _get_options(self):
+        pass  # pragma: no cover
+
+    @abstractmethod
+    def _get_languages(self, detectable=True):
+        pass  # pragma: no cover
+
+    @abstractmethod
+    def _say(self, phrase, language, voice, voiceinfo, options):
+        pass  # pragma: no cover
+
+    @classmethod
+    def get_init_options(cls):
+        options = {
+            'enabled': {
+                'type': 'bool',
+                'default': True
+            },
+        }
+        options.update(cls._get_init_options())
+        return options
+
+    # Base class continues here
     def __init__(self, **_options):
         self._logger = logging.getLogger(__name__)
         self.ioptions = process_options(self.__class__.get_init_options(), _options, TTSError)
 
-    @memoize
-    def has_audio_output(self):
-        return check_executable('aplay')
+        # Pre-caching potentially slow results
+        self.options = None
+        self.languages = None
+        self.available = self.is_available()
+        if self.available:
+            self.options = self.get_options()
+            self.languages = self.get_languages()
 
-    @abstractmethod
     def is_available(self):
-        pass  # pragma: no cover
+        return (
+            self.ioptions['enabled']
+            and check_executable('aplay')
+            and self._is_available()
+        )
 
-    @abstractmethod
-    def get_options(self):
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def get_languages(self, detectable=True):
-        pass  # pragma: no cover
-
-    def configure(self, language='en', voice=None, **_options):
-        if not (self.has_audio_output() and self.is_available()):
+    def _assert_available(self):
+        if not self.available:
             raise TTSError('Not available')
 
-        languages = self.get_languages()
-        if language not in languages.keys():
-            raise TTSError('Bad language: %s' % language, languages.keys())
+    def get_options(self):
+        self._assert_available()
+        return self._get_options()
 
-        voice = voice if voice else languages[language]['default']
-        if voice not in languages[language]['voices'].keys():
-            raise TTSError('Bad voice: %s' % voice, languages[language]['voices'].keys())
-        voiceinfo = languages[language]['voices'][voice]
+    def get_languages(self):
+        self._assert_available()
+        return self._get_languages()
 
-        valid_options = self.get_options()
-        options = process_options(valid_options, _options, TTSError)
-        #print(language, voice, voiceinfo, options)
+    def configure(self, language='en', voice=None, **_options):
+        self._assert_available()
+
+        if language not in self.languages.keys():
+            raise TTSError('Bad language: %s' % language, self.languages.keys())
+
+        voice = voice if voice else self.languages[language]['default']
+        if voice not in self.languages[language]['voices'].keys():
+            raise TTSError('Bad voice: %s' % voice, self.languages[language]['voices'].keys())
+        voiceinfo = self.languages[language]['voices'][voice]
+
+        options = process_options(self.options, _options, TTSError)
         return language, voice, voiceinfo, options
 
     def say(self, phrase, **options):
         language, voice, voiceinfo, options = self.configure(**options)
         self._say(phrase, language, voice, voiceinfo, options)
 
-    @abstractmethod
-    def _say(self, phrase, language, voice, voiceinfo, options):
-        pass  # pragma: no cover
 
     def play(self, filename, translate=False): # pragma: no cover
         # FIXME: Use platform-independent and async audio-output here

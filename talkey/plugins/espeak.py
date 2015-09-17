@@ -2,7 +2,7 @@ import os
 import tempfile
 import pipes
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, subprocess
-from talkey.utils import check_executable, memoize
+from talkey.utils import check_executable
 
 
 class EspeakTTS(AbstractTTSEngine):
@@ -20,16 +20,34 @@ class EspeakTTS(AbstractTTSEngine):
     ]
 
     @classmethod
-    def get_init_options(cls):
-        return {}
+    def _get_init_options(cls):
+        return {
+            'espeak': {
+                'type': 'str',
+                'default': 'espeak'
+            },
+            'mbrola': {
+                'type': 'str',
+                'default': 'mbrola'
+            },
+            'mbrola_voices': {
+                'type': 'str',
+                'default': '/usr/share/mbrola'
+            },
+            'passable_only': {
+                'type': 'bool',
+                'default': True
+            }
+        }
 
-    @memoize
-    def is_available(self):
-        return check_executable('espeak')
+    def _is_available(self):
+        return check_executable(self.ioptions['espeak'])
 
-    @memoize
-    def get_options(self):
-        output = subprocess.check_output(['espeak', '--voices=variant'], universal_newlines=True)
+    def has_mbrola(self):
+        return check_executable(self.ioptions['mbrola'])
+
+    def _get_options(self):
+        output = subprocess.check_output([self.ioptions['espeak'], '--voices=variant'], universal_newlines=True)
         variants = [row[row.find('!v/') + 3:].strip() for row in output.split('\n')[1:] if row]
         return {
             'variant': {
@@ -41,37 +59,42 @@ class EspeakTTS(AbstractTTSEngine):
                 'type': 'int',
                 'min': 0,
                 'max': 99,
-                'default': 50,
+                'default': 40,
             },
             'words_per_minute': {
                 'type': 'int',
                 'min': 80,
                 'max': 450,
-                'default': 175,
+                'default': 150,
             },
         }
 
-    @memoize
-    def get_languages(self, quality=True, detectable=True):
-        output = subprocess.check_output(['espeak', '--voices'], universal_newlines=True)
-        voices = [row.split()[1:4] for row in output.split('\n')[1:] if row]
-        langs = set([voice[0].split('-')[0] for voice in voices])
-        if detectable:
-            langs = [lang for lang in langs if lang in DETECTABLE_LANGS]
-        if quality:
+    def _get_languages(self):
+        output = subprocess.check_output([self.ioptions['espeak'], '--voices'], universal_newlines=True)
+        voices = [row.split()[:4] for row in output.split('\n')[1:] if row]
+
+        if self.has_mbrola():
+            output = subprocess.check_output([self.ioptions['espeak'], '--voices=mbrola'], universal_newlines=True)
+            mvoices = [row.split()[:5] for row in output.split('\n')[1:] if row]
+            for mvoice in mvoices:
+                mbfile = mvoice[4].split('-')[1]
+                mbfile = os.path.join(self.ioptions['mbrola_voices'], mbfile, mbfile)
+                if os.path.isfile(mbfile):
+                    voices.append(mvoice)
+
+        langs = set([voice[1].split('-')[0] for voice in voices])
+        if self.ioptions['passable_only']:
             langs = [lang for lang in langs if lang in self.QUALITY_LANGS]
-        tree = dict([(lang, {'default': None, 'voices': {}}) for lang in langs])
+        tree = dict([(lang, {'voices': {}}) for lang in langs])
         for voice in voices:
-            lang = voice[0].split('-')[0]
+            lang = voice[1].split('-')[0]
             if lang in langs:
-                tree[lang]['voices'][voice[2]] = {'gender': voice[1]}
-                #tree[lang]['voices'].append({'gender': voice[1], 'name': voice[2]})
-                if lang == voice[0]:
-                    tree[lang]['default'] = voice[2]
+                tree[lang]['voices'][voice[3]] = {'gender': voice[2], 'pty': int(voice[0])}
         for lang in langs:
-            if tree[lang]['default'] is None:
-                # If no explicit default, set it to the one with the shortest voice name
-                tree[lang]['default'] = sorted(tree[lang]['voices'].keys())[0]
+            # Try to find sane default voice
+            vcs = tree[lang]['voices']
+            pty = min([v['pty'] for v in vcs.values()])
+            tree[lang]['default'] = sorted([k for k,v in vcs.items() if v['pty'] == pty])[0]
         return tree
 
     def _say(self, phrase, language, voice, voiceinfo, options):
@@ -79,7 +102,7 @@ class EspeakTTS(AbstractTTSEngine):
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             fname = f.name
         cmd = [
-            'espeak',
+            self.ioptions['espeak'],
             '-v', voice + '+' + options['variant'],
             '-p', options['pitch_adjustment'],
             '-s', options['words_per_minute'],
