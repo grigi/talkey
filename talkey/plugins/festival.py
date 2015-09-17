@@ -41,7 +41,6 @@ class FestivalTTS(AbstractTTSEngine):
         }
 
     def _say(self, phrase, language, voice, voiceinfo, options):
-        self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
         cmd = ['festival', '--pipe']
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             fname = f.name

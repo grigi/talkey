@@ -166,7 +166,7 @@ class BaseTTSTest(unittest.TestCase):
     def test_class_configure(self):
         self.skip_not_available()
         obj = self.CLS(**self.CONF)
-        language, voice, voiceinfo, options = obj.configure()
+        language, voice, voiceinfo, options = obj._configure()
         self.assertEqual(language, 'en')
         self.assertIsNotNone(voice)
         self.assertEqual(voice, obj.get_languages()['en']['default'])

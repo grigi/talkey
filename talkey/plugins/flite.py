@@ -34,7 +34,6 @@ class FliteTTS(AbstractTTSEngine):
         }
 
     def _say(self, phrase, language, voice, voiceinfo, options):
-        self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
         cmd = [
             'flite',
             '-voice', voice,

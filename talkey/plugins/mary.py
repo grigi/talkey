@@ -66,8 +66,6 @@ class MaryTTS(AbstractTTSEngine):
         return langs
 
     def _say(self, phrase, language, voice, voiceinfo, options):
-        self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
-
         query = {'OUTPUT_TYPE': 'AUDIO',
                  'AUDIO': 'WAVE_FILE',
                  'INPUT_TYPE': 'TEXT',

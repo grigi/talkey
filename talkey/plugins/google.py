@@ -46,7 +46,6 @@ class GoogleTTS(AbstractTTSEngine):
         return langs
 
     def _say(self, phrase, language, voice, voiceinfo, options):
-        self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
         tts = gtts.gTTS(text=phrase, lang=voice)
         with tempfile.NamedTemporaryFile(suffix='.mp3', delete=False) as f:
             tmpfile = f.name

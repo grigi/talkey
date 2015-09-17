@@ -79,12 +79,16 @@ class AbstractTTSEngine(object):
         self.ioptions = process_options(self.__class__.get_init_options(), _options, TTSError)
 
         # Pre-caching potentially slow results
-        self.options = None
+        self.language = None
+        self.voice = None
+        self.options = {}
+        self.optionspec = None
         self.languages = None
         self.available = self.is_available()
         if self.available:
-            self.options = self.get_options()
+            self.optionspec = self.get_options()
             self.languages = self.get_languages()
+            self.configure()
 
     def is_available(self):
         return (
@@ -105,8 +109,11 @@ class AbstractTTSEngine(object):
         self._assert_available()
         return self._get_languages()
 
-    def configure(self, language='en', voice=None, **_options):
+    def _configure(self, language=None, voice=None, **_options):
         self._assert_available()
+
+        language = language or self.language or 'en'
+        voice = voice or self.voice
 
         if language not in self.languages.keys():
             raise TTSError('Bad language: %s' % language, self.languages.keys())
@@ -116,13 +123,18 @@ class AbstractTTSEngine(object):
             raise TTSError('Bad voice: %s' % voice, self.languages[language]['voices'].keys())
         voiceinfo = self.languages[language]['voices'][voice]
 
-        options = process_options(self.options, _options, TTSError)
+        newopts = self.options
+        newopts.update(_options)
+        options = process_options(self.optionspec, newopts, TTSError)
         return language, voice, voiceinfo, options
 
-    def say(self, phrase, **options):
-        language, voice, voiceinfo, options = self.configure(**options)
-        self._say(phrase, language, voice, voiceinfo, options)
+    def configure(self, **_options):
+        self.language, self.voice, voiceinfo, self.options = self._configure(**_options)
 
+    def say(self, phrase, **_options):
+        language, voice, voiceinfo, options = self._configure(**_options)
+        self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
+        self._say(phrase, language, voice, voiceinfo, options)
 
     def play(self, filename, translate=False): # pragma: no cover
         # FIXME: Use platform-independent and async audio-output here

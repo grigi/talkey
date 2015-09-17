@@ -40,7 +40,6 @@ class PicoTTS(AbstractTTSEngine):
         return langs
 
     def _say(self, phrase, language, voice, voiceinfo, options):
-        self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             fname = f.name
         cmd = ['pico2wave', '-l', voice, '-w', fname, phrase]
