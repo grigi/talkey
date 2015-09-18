@@ -145,7 +145,7 @@ class TalkeyTest(unittest.TestCase):
         for txt in self.TXTS:
             self.assertEqual(txt[1], tts.classify(txt[2]))
 
-        self.assertEqual(tts.get_engine_for_lang('en'), tts.engines[0])
+        self.assertEqual(tts.get_engine_for_lang('en').SLUG, 'espeak-tts')
 
         tts.say('Old McDonald had a farm')
         inst, filename, output = LAST_PLAY
@@ -169,6 +169,29 @@ class TalkeyTest(unittest.TestCase):
                 'pico-tts': {'options': {'enabled': False}},
                 'flite-tts': {'options': {'enabled': False}},
             })
+
+    def test_create_language_config(self):
+        tts = Talkey(config={
+            'espeak-tts': {
+                'languages': {
+                    'en': {
+                        'voice': 'english-mb-en1',
+                        'words_per_minute': 130
+                    },
+                }
+            },
+        })
+        eng = tts.engines[0]
+        self.assertEqual(eng.languages_options['en'][0], 'english-mb-en1')
+        self.assertEqual(eng.languages_options['en'][1]['words_per_minute'], 130)
+
+    def test_get_engine_for_lang(self):
+        tts = Talkey(config={
+            'espeak-tts': {'options': {'enabled': False}},
+        })
+        self.assertEqual(tts.get_engine_for_lang('fr').SLUG, 'pico-tts')
+        with self.assertRaisesRegexp(TTSError, 'Could not match language'):
+            tts.get_engine_for_lang('af')
 
 
 class BaseTTSTest(unittest.TestCase):
@@ -285,6 +308,17 @@ class EspeakTTSTest(BaseTTSTest):
         self.assertEqual(inst, obj)
         self.assertFalse(isfile(filename), 'Tempfile not deleted')
 
+    def test_enabled_not_available(self):
+        with self.assertRaisesRegexp(TTSError, 'Not available'):
+            self.CLS(enabled=True, espeak='badexec').configure()
+
+    def test_no_mbrola(self):
+        obj = self.CLS(enabled=True)
+        assert 'english-mb-en1' in obj.languages['en']['voices'].keys()
+
+        obj = self.CLS(enabled=True, mbrola='badexec')
+        assert 'english-mb-en1' not in obj.languages['en']['voices'].keys()
+
 
 class PicoTTSTest(BaseTTSTest):
     CLS = PicoTTS
@@ -295,7 +329,7 @@ class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
     SLUG = 'mary-tts'
     INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
-    CONF = {'enabled': True}#, 'host': 'mary.dfki.de'}
+    CONF = {'enabled': True, 'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
 

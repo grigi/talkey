@@ -61,7 +61,7 @@ class Talkey(object):
         for en in self.engines:
             if lang in en.languages.keys():
                 return en
-        raise TTSError('Could not match a language')  # pragma: no cover
+        raise TTSError('Could not match language')
 
     def say(self, txt):
         lang = self.classify(txt)
