@@ -31,8 +31,8 @@ At its simplest use case:
 .. code-block:: python
 
     import talkey
-    talkey.configure()
-    talkey.say('Old McDonald had a farm')
+    tts = talkey.Talkey()
+    tts.say('Old McDonald had a farm')
 
 But for best results you should configure it:
 
@@ -67,5 +67,5 @@ But for best results you should configure it:
     }
 
     import talkey
-    talkey.configure(CONF)
-    talkey.say('Old McDonald had a farm')
+    tts = talkey.Talkey(CONF)
+    tts.say('Old McDonald had a farm')
