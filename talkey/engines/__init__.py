@@ -16,4 +16,4 @@ _ENGINE_MAP = {
     'google-tts': GoogleTTS,
 }
 
-_ENGINE_ORDER = ['google-tts', 'mary-tts', 'espeak-tts', 'festival-tts', 'pico-tts', 'flite-tts']
+_ENGINE_ORDER = ['google-tts', 'mary-tts', 'espeak-tts', 'festival-tts', 'pico-tts', 'flite-tts', 'dummy-tts']

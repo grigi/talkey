@@ -6,6 +6,7 @@ from os.path import isfile
 from talkey.base import DETECTABLE_LANGS, TTSError
 from talkey.engines import *
 from talkey.utils import check_executable, process_options
+from talkey.tts import create_engine, Talkey
 
 try:
     import unittest2 as unittest  # pylint: disable=F0401
@@ -22,7 +23,6 @@ def fakeplay(self, filename, translate=False):
     output = subprocess.check_output(['file', filename], universal_newlines=True)
     LAST_PLAY = (self, filename, output)
 AbstractTTSEngine.play = fakeplay
-
 
 class CheckExecutableTest(unittest.TestCase):
 
@@ -116,10 +116,66 @@ class ProcessOptionsTest(unittest.TestCase):
         self.assertEqual(ret, {'test': 'two'})
 
 
+class CreateEngineTest(unittest.TestCase):
+    def test_create_engine(self):
+        eng = create_engine('dummy-tts', options={'enabled': True})
+        self.assertEqual(eng.SLUG, 'dummy-tts')
+        self.assertTrue(eng.available)
+        assert eng.languages
+
+    def test_create_engine_bad(self):
+        with self.assertRaisesRegexp(TTSError, 'Unknown engine'):
+            create_engine('baddy-tts')
+
+
+class TalkeyTest(unittest.TestCase):
+    TXTS = [
+        # Actual, Unweighted, Text
+        ('en', 'pl', 'Cows go moo'),
+        ('en', 'en', 'Old McDonald had a farm'),
+        ('af', 'nl', "Ou boer McDonald het 'n plaas gehad"),
+    ]
+
+    def setUp(self):
+        global LAST_PLAY
+        LAST_PLAY = None
+
+    def test_create_basic(self):
+        tts = Talkey()
+        for txt in self.TXTS:
+            self.assertEqual(txt[1], tts.classify(txt[2]))
+
+        self.assertEqual(tts.get_engine_for_lang('en'), tts.engines[0])
+
+        tts.say('Old McDonald had a farm')
+        inst, filename, output = LAST_PLAY
+        self.assertIn('WAVE audio', output)
+        self.assertEqual(inst, tts.engines[0])
+        self.assertFalse(isfile(filename), 'Tempfile not deleted')
+
+    def test_create_weighted(self):
+        tts = Talkey(config=dict(preferred_languages=['en', 'af']))
+        for txt in self.TXTS:
+            self.assertEqual(txt[0], tts.classify(txt[2]))
+
+        tts = Talkey(config=dict(preferred_languages=['en', 'af'], preferred_factor=10.0))
+        self.assertEqual(self.TXTS[2][1], tts.classify(self.TXTS[2][2]))
+
+    def test_create_empty(self):
+        with self.assertRaisesRegexp(TTSError, 'No supported languages'):
+            Talkey(config={
+                'espeak-tts': {'options': {'enabled': False}},
+                'festival-tts': {'options': {'enabled': False}},
+                'pico-tts': {'options': {'enabled': False}},
+                'flite-tts': {'options': {'enabled': False}},
+            })
+
+
 class BaseTTSTest(unittest.TestCase):
     '''
     Tests talkey basic functionality
     '''
+    # pylint: disable=E1102
     CLS = None
     SLUG = None
     INIT_ATTRS = ['enabled']
@@ -239,7 +295,7 @@ class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
     SLUG = 'mary-tts'
     INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
-    CONF = {'enabled': True, 'host': 'mary.dfki.de'}
+    CONF = {'enabled': True}#, 'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
 

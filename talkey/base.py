@@ -39,6 +39,7 @@ class AbstractTTSEngine(object):
     Generic parent class for all speakers
     """
     __metaclass__ = ABCMeta
+    SLUG = None
 
     # Define these in your engine
     @classmethod

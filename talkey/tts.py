@@ -8,7 +8,7 @@ def enumerate_engines():
     return _ENGINE_ORDER
 
 def create_engine(engine, options=None, defaults=None):
-    if engine not in _ENGINE_ORDER:
+    if engine not in _ENGINE_MAP.keys():
         raise TTSError('Unknown engine %s' % engine)
 
     options = options or {}
@@ -24,6 +24,8 @@ class Talkey(object):
 
         self.engines = []
         self.languages = set()
+        self.preferred_languages = set(config.get('preferred_languages', []))
+        self.preferred_factor = float(config.get('preferred_factor', 80.0))
 
         for ename in enumerate_engines():
             try:
@@ -46,14 +48,22 @@ class Talkey(object):
         if not self.languages:
             raise TTSError('No supported languages')
 
+    def classify(self, txt):
+        ranks = []
+        for lang, score in langid.rank(txt):
+            if lang in self.preferred_languages:
+                score *= self.preferred_factor
+            ranks.append((lang, score))
+        ranks.sort(key=lambda x:x[1], reverse=True)
+        return ranks[0][0]
+
+    def get_engine_for_lang(self, lang):
+        for en in self.engines:
+            if lang in en.languages.keys():
+                return en
+        raise TTSError('Could not match a language')  # pragma: no cover
 
     def say(self, txt):
-        def get_engine_for_lang(lang):
-            for en in self.engines:
-                if lang in en.languages.keys():
-                    return en
-            raise TTSError('Could not match a language')
-
-        lang = langid.classify(txt)[0]
-        get_engine_for_lang(lang).say(txt, language=lang)
+        lang = self.classify(txt)
+        self.get_engine_for_lang(lang).say(txt, language=lang)
 

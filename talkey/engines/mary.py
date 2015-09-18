@@ -3,9 +3,11 @@ import tempfile
 import requests
 
 try:
+    # pylint: disable=E0611
     from urlparse import urlunsplit
     from urllib import urlencode
 except ImportError:
+    # pylint: disable=E0611
     from urllib.parse import urlunsplit, urlencode
 
 from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
