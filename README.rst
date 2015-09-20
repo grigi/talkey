@@ -2,7 +2,7 @@
 talkey
 ######
 
-Simple Test-To-Speech (TTS) interface library with multi-language and multi-engine support.
+Simple Text-To-Speech (TTS) interface library with multi-language and multi-engine support.
 
 .. image:: https://travis-ci.org/grigi/talkey.svg
     :target: https://travis-ci.org/grigi/talkey?branch=master
