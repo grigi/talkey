@@ -76,7 +76,9 @@ For best results you should configure it:
         # Key is the engine SLUG, in this case ``espeak``
         espeak={
             # Specify the engine options:
-            'enabled': True,
+            'options': {
+                'enabled': True,
+            },
 
             # Specify some default voice options
             'defaults': {

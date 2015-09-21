@@ -2,7 +2,6 @@ import os
 import tempfile
 import pipes
 from talkey.base import AbstractTTSEngine, subprocess, register
-from talkey.utils import check_executable
 
 
 @register
@@ -26,13 +25,16 @@ class EspeakTTS(AbstractTTSEngine):
         return {
             'espeak': {
                 'description': 'eSpeak executable path',
-                'type': 'str',
-                'default': 'espeak'
+                'type': 'exec',
+                'default': [
+                    'espeak',
+                    r'c:\Program Files\eSpeak\command_line\espeak.exe'
+                ]
             },
             'mbrola': {
                 'description': 'mbrola executable path',
-                'type': 'str',
-                'default': 'mbrola'
+                'type': 'exec',
+                'default': ['mbrola']
             },
             'mbrola_voices': {
                 'description': 'mbrola voices path',
@@ -47,14 +49,14 @@ class EspeakTTS(AbstractTTSEngine):
         }
 
     def _is_available(self):
-        return check_executable(self.ioptions['espeak'])
+        return self.ioptions['espeak'] is not None
 
     def has_mbrola(self):
-        return check_executable(self.ioptions['mbrola'])
+        return self.ioptions['mbrola'] is not None
 
     def _get_options(self):
         output = subprocess.check_output([self.ioptions['espeak'], '--voices=variant'], universal_newlines=True)
-        variants = [row[row.find('!v/') + 3:].strip() for row in output.split('\n')[1:] if row]
+        variants = [row[row.find('!v') + 3:].strip() for row in output.split('\n')[1:] if row]
         return {
             'variant': {
                 'type': 'enum',
@@ -85,7 +87,11 @@ class EspeakTTS(AbstractTTSEngine):
             return voice
 
         output = subprocess.check_output([self.ioptions['espeak'], '--voices'], universal_newlines=True)
-        voices = [['espeak'] + fix_voice(row.split())[:4] for row in output.split('\n')[1:] if row]
+        voices = [
+            ['mbrola' if fix_voice(row.split())[4].startswith('mb') else 'espeak'] + fix_voice(row.split())[:4]
+            for row in output.split('\n')[1:]
+            if row
+        ]
 
         if self.has_mbrola():
             output = subprocess.check_output([self.ioptions['espeak'], '--voices=mbrola'], universal_newlines=True)
