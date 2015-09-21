@@ -147,3 +147,15 @@ For mbrola and its voices:
 
     Go to http://espeak.sourceforge.net/mbrola.html and download and install ``MbrolaTools<version>.exe`` and follow directions to install voices from  http://www.tcts.fpms.ac.be/synthesis/mbrola/mbrcopybin.html
 
+For google TTS:
+
+    install python package gTTS
+
+    Download ffmpeg from http://ffmpeg.zeranoe.com/builds/
+
+    Extract with 7Zip, and add the \bin folder to the PATH.
+
+    e.g.:
+        extract to C:\ffmpeg and add C:\ffmpeg\bin to the PATH
+
+    (In cmd.exe you should be able to just run ffmpeg and see it showing information, then it is working right)
