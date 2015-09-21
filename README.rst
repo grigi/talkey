@@ -35,6 +35,8 @@ At its simplest use case:
     tts = talkey.Talkey()
     tts.say('Old McDonald had a farm')
 
+If you get a ``talkey.base.TTSError: No supported languages`` error, it means that you don't have a supported TTS engine installed. Please see below.
+
 By default it will try to locate and use the local instances of the following TTS engines:
 
 * Flite
@@ -97,3 +99,51 @@ For best results you should configure it:
         }
     )
     tts.say('Old McDonald had a farm')
+
+Installing TTS engines
+======================
+
+Ubuntu/Debian:
+--------------
+
+For festival:
+
+.. code-block:: shell
+
+    sudo apt-get install festival
+
+For flite:
+
+.. code-block:: shell
+
+    sudo apt-get install flite
+
+For SVOX Pico:
+
+.. code-block:: shell
+
+    sudo apt-get install libttspico-utils
+
+For eSpeak:
+
+.. code-block:: shell
+
+    sudo apt-get install espeak
+
+For mbrola and en1 voice:
+
+.. code-block:: shell
+
+    sudo apt-get install mbrola-en1
+
+Windows:
+--------
+
+Install eSpeak:
+
+    Go to http://espeak.sourceforge.net/download.html and download and install ``setup_espeak-<version>.exe``
+
+For mbrola and its voices:
+
+    Go to http://espeak.sourceforge.net/mbrola.html and download and install ``MbrolaTools<version>.exe`` and follow directions to install voices from  http://www.tcts.fpms.ac.be/synthesis/mbrola/mbrcopybin.html
+

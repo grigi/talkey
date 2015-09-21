@@ -34,7 +34,7 @@ class EspeakTTS(AbstractTTSEngine):
             'mbrola': {
                 'description': 'mbrola executable path',
                 'type': 'exec',
-                'default': ['mbrola']
+                'default': 'mbrola'
             },
             'mbrola_voices': {
                 'description': 'mbrola voices path',
