@@ -153,9 +153,9 @@ For google TTS:
 
     Download ffmpeg from http://ffmpeg.zeranoe.com/builds/
 
-    Extract with 7Zip, and add the \bin folder to the PATH.
+    Extract with 7Zip, and add the \\bin folder to the PATH.
 
     e.g.:
-        extract to C:\ffmpeg and add C:\ffmpeg\bin to the PATH
+        extract to C:\\ffmpeg and add C:\\ffmpeg\\bin to the PATH
 
     (In cmd.exe you should be able to just run ffmpeg and see it showing information, then it is working right)
