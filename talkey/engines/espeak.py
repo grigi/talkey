@@ -24,18 +24,22 @@ class EspeakTTS(AbstractTTSEngine):
     def _get_init_options(cls):
         return {
             'espeak': {
+                'description': 'eSpeak executable path',
                 'type': 'str',
                 'default': 'espeak'
             },
             'mbrola': {
+                'description': 'mbrola executable path',
                 'type': 'str',
                 'default': 'mbrola'
             },
             'mbrola_voices': {
+                'description': 'mbrola voices path',
                 'type': 'str',
                 'default': '/usr/share/mbrola'
             },
             'passable_only': {
+                'description': 'Only allow languages of passable quality, as per http://espeak.sourceforge.net/languages.html',
                 'type': 'bool',
                 'default': True
             }

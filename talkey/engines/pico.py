@@ -16,10 +16,16 @@ class PicoTTS(AbstractTTSEngine):
 
     @classmethod
     def _get_init_options(cls):
-        return {}
+        return {
+            'pico2wave': {
+                'description': 'pico2wave executable path',
+                'type': 'str',
+                'default': 'pico2wave'
+            },
+        }
 
     def _is_available(self):
-        return check_executable('pico2wave')
+        return check_executable(self.ioptions['pico2wave'])
 
     def _get_options(self):
         return {}

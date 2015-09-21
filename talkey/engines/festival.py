@@ -22,10 +22,16 @@ class FestivalTTS(AbstractTTSEngine):
 
     @classmethod
     def _get_init_options(cls):
-        return {}
+        return {
+            'festival': {
+                'description': 'Festival executable path',
+                'type': 'str',
+                'default': 'festival'
+            },
+        }
 
     def _is_available(self):
-        if check_executable('festival'):
+        if check_executable(self.ioptions['festival']):
             cmd = ['festival', '--pipe']
             with tempfile.SpooledTemporaryFile() as in_f:
                 self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))

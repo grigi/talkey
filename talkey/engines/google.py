@@ -23,6 +23,7 @@ class GoogleTTS(AbstractTTSEngine):
     def _get_init_options(cls):
         return {
             'enabled': {
+                'description': 'Is enabled?',
                 'type': 'bool',
                 'default': False,
             },

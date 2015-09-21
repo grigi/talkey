@@ -67,6 +67,7 @@ class AbstractTTSEngine(object):
     def get_init_options(cls):
         options = {
             'enabled': {
+                'description': 'Is enabled?',
                 'type': 'bool',
                 'default': True
             },

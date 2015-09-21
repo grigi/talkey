@@ -271,7 +271,6 @@ class BaseTTSTest(unittest.TestCase):
 class DummyTTSTest(BaseTTSTest):
     CLS = DummyTTS
     SLUG = 'dummy'
-    INIT_ATTRS = ['enabled']
     CONF = {'enabled': True}
     EVAL_PLAY = False
 
@@ -287,11 +286,13 @@ class DummyTTSTest(BaseTTSTest):
 class FestivalTTSTest(BaseTTSTest):
     CLS = FestivalTTS
     SLUG = 'festival'
+    INIT_ATTRS = ['enabled', 'festival']
 
 
 class FliteTTSTest(BaseTTSTest):
     CLS = FliteTTS
     SLUG = 'flite'
+    INIT_ATTRS = ['enabled', 'flite']
 
 
 class EspeakTTSTest(BaseTTSTest):
@@ -329,6 +330,7 @@ class EspeakTTSTest(BaseTTSTest):
 class PicoTTSTest(BaseTTSTest):
     CLS = PicoTTS
     SLUG = 'pico'
+    INIT_ATTRS = ['enabled', 'pico2wave']
 
 
 class MaryTTSTest(BaseTTSTest):

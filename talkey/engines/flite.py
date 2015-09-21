@@ -8,7 +8,7 @@ from talkey.utils import check_executable
 class FliteTTS(AbstractTTSEngine):
     """
     Uses the flite speech synthesizer.
-    
+
     Requires ``flite`` to be available.
     """
 
@@ -16,10 +16,16 @@ class FliteTTS(AbstractTTSEngine):
 
     @classmethod
     def _get_init_options(cls):
-        return {}
+        return {
+            'flite': {
+                'description': 'FLite executable path',
+                'type': 'str',
+                'default': 'flite'
+            },
+        }
 
     def _is_available(self):
-        return check_executable('flite')
+        return check_executable(self.ioptions['flite'])
 
     def _get_options(self):
         return {}

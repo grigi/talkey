@@ -29,18 +29,23 @@ class MaryTTS(AbstractTTSEngine):
     def _get_init_options(cls):
         return {
             'enabled': {
+                'description': 'Is enabled?',
                 'type': 'bool',
                 'default': False,
             },
             'scheme': {
-                'type': 'str',
+                'description': 'HTTP schema',
+                'type': 'enum',
                 'default': 'http',
+                'values': ['http', 'https'],
             },
             'host': {
+                'description': 'Mary server address',
                 'type': 'str',
                 'default': '127.0.0.1',
             },
             'port': {
+                'description': 'Mary server port',
                 'type': 'int',
                 'default': 59125,
                 'min': 1,
