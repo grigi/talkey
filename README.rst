@@ -9,6 +9,8 @@ Simple Text-To-Speech (TTS) interface library with multi-language and multi-engi
 .. image:: https://coveralls.io/repos/grigi/talkey/badge.svg?branch=master&service=github
     :target: https://coveralls.io/github/grigi/talkey?branch=master
 
+Documentation: http://talkey.readthedocs.org/
+
 Rationale
 =========
 
