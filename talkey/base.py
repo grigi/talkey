@@ -9,6 +9,10 @@ try:
 except ImportError:
     import subprocess
 
+try:
+    import winsound
+except ImportError:
+    winsound = None
 
 from talkey.utils import process_options, check_executable
 
@@ -136,6 +140,9 @@ class AbstractTTSEngine(object):
             self.languages = self.get_languages()
             self.configure_default()
 
+    def sound_available(self):
+        return winsound or check_executable('aplay')
+
     def is_available(self):
         '''
         Boolean on if engine available.
@@ -144,7 +151,7 @@ class AbstractTTSEngine(object):
         '''
         return (
             self.ioptions['enabled']
-            and check_executable('aplay')
+            and self.sound_available()
             and self._is_available()
         )
 
@@ -246,9 +253,12 @@ class AbstractTTSEngine(object):
                         of.writeframes(buf)
             filename = fname
 
-        cmd = ['aplay', str(filename)]
-        self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
-        subprocess.call(cmd)
+        if winsound:
+            winsound.PlaySound(str(filename), winsound.SND_FILENAME)
+        else:
+            cmd = ['aplay', str(filename)]
+            self._logger.debug('Executing %s', ' '.join([pipes.quote(arg) for arg in cmd]))
+            subprocess.call(cmd)
 
         if translate:
             os.remove(fname)
