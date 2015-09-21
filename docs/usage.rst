@@ -10,7 +10,6 @@ talkey module:
 
 .. autoclass:: talkey.Talkey
     :members:
-    :undoc-members:
 
 .. autoexception:: talkey.TTSError
 

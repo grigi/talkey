@@ -127,5 +127,5 @@ class Talkey(object):
 
         if ``lang`` is ``None``, then uses ``classify()`` to detect language.
         '''
-        lang = self.classify(txt)
+        lang = lang or self.classify(txt)
         self.get_engine_for_lang(lang).say(txt, language=lang)

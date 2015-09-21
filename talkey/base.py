@@ -40,11 +40,13 @@ def genrst(label, opt, txt, indent='    '):
 
 def register(cls):
     cls.__doc__ = genrst('Initialization options', cls.get_init_options(), cls.__doc__)
-    # print(cls.__doc__)
     return cls
 
 
 class TTSError(Exception):
+    '''
+    The exception that Talkey will throw if any error occurs.
+    '''
 
     def __init__(self, error, valid_set=None):  # pylint: disable=W0231
         self.error = error
@@ -63,31 +65,50 @@ class AbstractTTSEngine(object):
     """
     __metaclass__ = ABCMeta
     SLUG = None
+    'The SLUG is used to identify the engine as text'
 
     # Define these in your engine
     @classmethod
     @abstractmethod
     def _get_init_options(cls):
+        'AbstractMethod: Returns dict of engine options'
         pass  # pragma: no cover
 
     @abstractmethod
     def _is_available(self):
+        'AbstractMethod: Boolean on if engine is available'
         pass  # pragma: no cover
 
     @abstractmethod
     def _get_options(self):
+        'AbstractMethod: Returns dict of voice options'
         pass  # pragma: no cover
 
     @abstractmethod
     def _get_languages(self):
+        'AbstractMethod: Returns dict of supported languages and voices'
         pass  # pragma: no cover
 
     @abstractmethod
     def _say(self, phrase, language, voice, voiceinfo, options):
+        '''
+        AbstractMethod: Let engin actually says the phrase
+
+        :phrase: The text phrase to say
+        :language: The requested language
+        :voice: The requested voice
+        :voiceinfo: Data about the requested voice
+        :options: Extra options
+        '''
         pass  # pragma: no cover
 
     @classmethod
     def get_init_options(cls):
+        '''
+        Returns a dict describing the engine options.
+
+        Uses cls._get_init_options()
+        '''
         options = {
             'enabled': {
                 'description': 'Is enabled?',
@@ -116,6 +137,11 @@ class AbstractTTSEngine(object):
             self.configure_default()
 
     def is_available(self):
+        '''
+        Boolean on if engine available.
+
+        Checks if enabled, can output audio and self._is_available()
+        '''
         return (
             self.ioptions['enabled']
             and check_executable('aplay')
@@ -129,10 +155,20 @@ class AbstractTTSEngine(object):
             raise TTSError('Not available')
 
     def get_options(self):
+        '''
+        Returns dict of voice options.
+
+        Raises TTSError if not available.
+        '''
         self._assert_available()
         return self._get_options()
 
     def get_languages(self):
+        '''
+        Returns dict of supported languages and voices.
+
+        Raises TTSError if not available.
+        '''
         self._assert_available()
         return self._get_languages()
 
@@ -161,21 +197,40 @@ class AbstractTTSEngine(object):
         return language, voice, voiceinfo, options
 
     def configure_default(self, **_options):
+        '''
+        Sets default configuration.
+
+        Raises TTSError on error.
+        '''
         language, voice, voiceinfo, options = self._configure(**_options)
         self.languages_options[language] = (voice, options)
         self.default_language = language
         self.default_options = options
 
     def configure(self, **_options):
+        '''
+        Sets language-specific configuration.
+
+        Raises TTSError on error.
+        '''
         language, voice, voiceinfo, options = self._configure(**_options)
         self.languages_options[language] = (voice, options)
 
     def say(self, phrase, **_options):
+        '''
+        Says the phrase, optionally allows to select/override any voice options.
+        '''
         language, voice, voiceinfo, options = self._configure(**_options)
         self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
         self._say(phrase, language, voice, voiceinfo, options)
 
     def play(self, filename, translate=False):  # pragma: no cover
+        '''
+        Plays the sounds.
+
+        :filename: The input file name
+        :translate: If True, it runs it through audioread which will translate from common compression formats to raw WAV.
+        '''
         # FIXME: Use platform-independent and async audio-output here
         # PyAudio looks most promising, too bad about:
         #  --allow-external PyAudio --allow-unverified PyAudio
