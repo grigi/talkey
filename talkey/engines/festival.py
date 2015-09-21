@@ -43,7 +43,7 @@ class FestivalTTS(AbstractTTSEngine):
     def _get_options(self):
         return {}
 
-    def _get_languages(self, detectable=True):
+    def _get_languages(self):
         return {
             'en': {'default': 'en', 'voices': {'en': {}}}
         }
@@ -59,4 +59,3 @@ class FestivalTTS(AbstractTTSEngine):
             subprocess.call(cmd, stdin=in_f)
         self.play(fname)
         os.remove(fname)
-

@@ -10,7 +10,7 @@ except ImportError:
     # pylint: disable=E0611
     from urllib.parse import urlunsplit, urlencode
 
-from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, register
+from talkey.base import AbstractTTSEngine, register
 from talkey.utils import check_network_connection
 
 
@@ -65,7 +65,7 @@ class MaryTTS(AbstractTTSEngine):
     def _get_options(self):
         return {}
 
-    def _get_languages(self, detectable=True):
+    def _get_languages(self):
         res = requests.get(self._makeurl('voices')).text
         langs = {}
         for voice in [row.split() for row in res.split('\n') if row]:

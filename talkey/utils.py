@@ -107,4 +107,3 @@ def process_options(valid_options, _options, error):
             val = True if str(val).lower() in ['y', '1', 'yes', 'true', 't'] else False
         options[option] = val
     return options
-

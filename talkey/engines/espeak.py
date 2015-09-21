@@ -1,7 +1,7 @@
 import os
 import tempfile
 import pipes
-from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, subprocess, register
+from talkey.base import AbstractTTSEngine, subprocess, register
 from talkey.utils import check_executable
 
 
@@ -75,7 +75,6 @@ class EspeakTTS(AbstractTTSEngine):
             },
         }
 
-
     def _get_languages(self):
         'Get all working voices and languages for eSpeak'
 
@@ -86,7 +85,7 @@ class EspeakTTS(AbstractTTSEngine):
             return voice
 
         output = subprocess.check_output([self.ioptions['espeak'], '--voices'], universal_newlines=True)
-        voices = [['espeak']+fix_voice(row.split())[:4] for row in output.split('\n')[1:] if row]
+        voices = [['espeak'] + fix_voice(row.split())[:4] for row in output.split('\n')[1:] if row]
 
         if self.has_mbrola():
             output = subprocess.check_output([self.ioptions['espeak'], '--voices=mbrola'], universal_newlines=True)
@@ -95,7 +94,7 @@ class EspeakTTS(AbstractTTSEngine):
                 mbfile = mvoice[4].split('-')[1]
                 mbfile = os.path.join(self.ioptions['mbrola_voices'], mbfile, mbfile)
                 if os.path.isfile(mbfile):
-                    voices.append(['mbrola']+ mvoice)
+                    voices.append(['mbrola'] + mvoice)
 
         langs = set([voice[2].split('-')[0] for voice in voices])
         if self.ioptions['passable_only']:
@@ -109,7 +108,7 @@ class EspeakTTS(AbstractTTSEngine):
             # Try to find sane default voice, score by pty, then take shortest (for determinism)
             vcs = tree[lang]['voices']
             pty = min([v['pty'] for v in vcs.values()])
-            tree[lang]['default'] = sorted([k for k,v in vcs.items() if v['pty'] == pty])[0]
+            tree[lang]['default'] = sorted([k for k, v in vcs.items() if v['pty'] == pty])[0]
         return tree
 
     def _say(self, phrase, language, voice, voiceinfo, options):

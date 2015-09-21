@@ -6,7 +6,7 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
-from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, register
+from talkey.base import AbstractTTSEngine, register
 from talkey.utils import check_network_connection, check_python_import
 
 
@@ -39,7 +39,7 @@ class GoogleTTS(AbstractTTSEngine):
     def _get_options(self):
         return {}
 
-    def _get_languages(self, detectable=True):
+    def _get_languages(self):
         voices = gtts.gTTS.LANGUAGES.keys()
         langs = {}
         for voice in voices:

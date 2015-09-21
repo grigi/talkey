@@ -20,26 +20,29 @@ import wave
 # Get the list of identifiable languages
 DETECTABLE_LANGS = sorted([a[0] for a in langid.rank('')])
 
+
 def genrst(label, opt, txt, indent='    '):
     txt += '\n%s%s:\n\n' % (indent, label)
     for key in sorted(opt.keys()):
         val = opt[key]
-        txt += indent+'``%s``\n' % key
-        txt += indent+'    %s\n\n' % val.get('description', '%s option' % key)
-        txt += indent+'    :type: %s\n' % val['type']
-        txt += indent+'    :default: %s\n' % val['default']
+        txt += indent + '``%s``\n' % key
+        txt += indent + '    %s\n\n' % val.get('description', '%s option' % key)
+        txt += indent + '    :type: %s\n' % val['type']
+        txt += indent + '    :default: %s\n' % val['default']
         if 'min' in val.keys():
-            txt += indent+'    :min: %s\n' % val['min']
+            txt += indent + '    :min: %s\n' % val['min']
         if 'max' in val.keys():
-            txt += indent+'    :max: %s\n' % val['max']
+            txt += indent + '    :max: %s\n' % val['max']
         if 'values' in val.keys():
-            txt += indent+'    :values: %s\n' % ', '.join(val['values'])
+            txt += indent + '    :values: %s\n' % ', '.join(val['values'])
     return txt
+
 
 def register(cls):
     cls.__doc__ = genrst('Initialization options', cls.get_init_options(), cls.__doc__)
-    #print(cls.__doc__)
+    # print(cls.__doc__)
     return cls
+
 
 class TTSError(Exception):
 
@@ -76,7 +79,7 @@ class AbstractTTSEngine(object):
         pass  # pragma: no cover
 
     @abstractmethod
-    def _get_languages(self, detectable=True):
+    def _get_languages(self):
         pass  # pragma: no cover
 
     @abstractmethod
@@ -138,7 +141,6 @@ class AbstractTTSEngine(object):
             return self.languages_options[language]
         return None, {}
 
-
     def _configure(self, language=None, voice=None, **_options):
         self._assert_available()
 
@@ -173,7 +175,7 @@ class AbstractTTSEngine(object):
         self._logger.debug("Saying '%s' with '%s'", phrase, self.SLUG)
         self._say(phrase, language, voice, voiceinfo, options)
 
-    def play(self, filename, translate=False): # pragma: no cover
+    def play(self, filename, translate=False):  # pragma: no cover
         # FIXME: Use platform-independent and async audio-output here
         # PyAudio looks most promising, too bad about:
         #  --allow-external PyAudio --allow-unverified PyAudio

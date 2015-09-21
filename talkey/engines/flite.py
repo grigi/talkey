@@ -31,7 +31,7 @@ class FliteTTS(AbstractTTSEngine):
     def _get_options(self):
         return {}
 
-    def _get_languages(self, detectable=True):
+    def _get_languages(self):
         output = subprocess.check_output(['flite', '-lv'], universal_newlines=True)
         voices = output[output.find(':') + 1:].split()
         return {

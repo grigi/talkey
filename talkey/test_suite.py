@@ -2,11 +2,12 @@
 talkey test suite
 '''
 # pylint: disable=W0104
-from os.path import isfile
-from talkey.base import DETECTABLE_LANGS, TTSError
+from talkey.base import DETECTABLE_LANGS, TTSError, AbstractTTSEngine, subprocess
 from talkey.engines import *
 from talkey.utils import check_executable, process_options
 from talkey.tts import create_engine, Talkey
+
+from os.path import isfile
 
 try:
     import unittest2 as unittest  # pylint: disable=F0401
@@ -15,14 +16,15 @@ except ImportError:
 
 LAST_PLAY = None
 
+
 # Patch AbstractTTSEngine.play to record its params
 # Really need to make this loosely connected
-from talkey.base import AbstractTTSEngine, subprocess
 def fakeplay(self, filename, translate=False):
     global LAST_PLAY
     output = subprocess.check_output(['file', filename], universal_newlines=True)
     LAST_PLAY = (self, filename, output)
 AbstractTTSEngine.play = fakeplay
+
 
 class CheckExecutableTest(unittest.TestCase):
 
@@ -117,6 +119,7 @@ class ProcessOptionsTest(unittest.TestCase):
 
 
 class CreateEngineTest(unittest.TestCase):
+
     def test_create_engine(self):
         eng = create_engine('dummy', options={'enabled': True})
         self.assertEqual(eng.SLUG, 'dummy')
@@ -348,5 +351,3 @@ class GoogleTTSTest(BaseTTSTest):
     CONF = {'enabled': True}
     FILE_TYPE = 'MPEG ADTS, layer III'
     SKIP_IF_NOT_AVAILABLE = True
-
-

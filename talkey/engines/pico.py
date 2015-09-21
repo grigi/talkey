@@ -32,7 +32,7 @@ class PicoTTS(AbstractTTSEngine):
     def _get_options(self):
         return {}
 
-    def _get_languages(self, detectable=True):
+    def _get_languages(self):
         cmd = ['pico2wave', '-l', 'NULL', '-w', os.devnull]
         with tempfile.SpooledTemporaryFile() as f:
             subprocess.call(cmd, stderr=f)

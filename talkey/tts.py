@@ -10,6 +10,7 @@ def enumerate_engines():
     '''
     return _ENGINE_ORDER
 
+
 def create_engine(engine, options=None, defaults=None):
     '''
     Creates an instance of an engine.
@@ -28,6 +29,7 @@ def create_engine(engine, options=None, defaults=None):
     einst = _ENGINE_MAP[engine](**options)
     einst.configure_default(**defaults)
     return einst
+
 
 class Talkey(object):
     '''
@@ -75,19 +77,19 @@ class Talkey(object):
 
         for ename in engine_preference:
             try:
-                options = config.get(ename,{}).get('options',{})
-                defaults = config.get(ename,{}).get('defaults',{})
-                en = create_engine(ename, options=options, defaults=defaults)
-                self.engines.append(en)
+                options = config.get(ename, {}).get('options', {})
+                defaults = config.get(ename, {}).get('defaults', {})
+                eng = create_engine(ename, options=options, defaults=defaults)
+                self.engines.append(eng)
 
-                languages = config.get(ename,{}).get('languages',{})
+                languages = config.get(ename, {}).get('languages', {})
                 for lang, conf in languages.items():
-                    en.configure(language=lang, **conf)
+                    eng.configure(language=lang, **conf)
             except TTSError:
                 pass
 
-        for en in self.engines:
-            self.languages.update(en.languages.keys())
+        for eng in self.engines:
+            self.languages.update(eng.languages.keys())
 
         langid.set_languages(self.languages)
 
@@ -103,16 +105,16 @@ class Talkey(object):
             if lang in self.preferred_languages:
                 score *= self.preferred_factor
             ranks.append((lang, score))
-        ranks.sort(key=lambda x:x[1], reverse=True)
+        ranks.sort(key=lambda x: x[1], reverse=True)
         return ranks[0][0]
 
     def get_engine_for_lang(self, lang):
         '''
         Determines the preferred engine/voice for a language.
         '''
-        for en in self.engines:
-            if lang in en.languages.keys():
-                return en
+        for eng in self.engines:
+            if lang in eng.languages.keys():
+                return eng
         raise TTSError('Could not match language')
 
     def say(self, txt, lang=None):
@@ -123,4 +125,3 @@ class Talkey(object):
         '''
         lang = self.classify(txt)
         self.get_engine_for_lang(lang).say(txt, language=lang)
-
