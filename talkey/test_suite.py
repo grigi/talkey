@@ -193,6 +193,12 @@ class TalkeyTest(unittest.TestCase):
         with self.assertRaisesRegexp(TTSError, 'Could not match language'):
             tts.get_engine_for_lang('af')
 
+    def test_engine_preference(self):
+        tts = Talkey(engine_preference=['pico'])
+
+        self.assertEqual(tts.engines[0].SLUG, 'pico')
+        self.assertEqual(tts.engines[1].SLUG, 'espeak')
+
 
 class BaseTTSTest(unittest.TestCase):
     '''
@@ -329,7 +335,7 @@ class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
     SLUG = 'mary'
     INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
-    CONF = {'enabled': True}#, 'host': 'mary.dfki.de'}
+    CONF = {'enabled': True, 'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
 
