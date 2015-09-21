@@ -7,8 +7,9 @@ from talkey.utils import check_executable
 
 class FliteTTS(AbstractTTSEngine):
     """
-    Uses the flite speech synthesizer
-    Requires flite to be available
+    Uses the flite speech synthesizer.
+    
+    Requires ``flite`` to be available.
     """
 
     SLUG = 'flite'

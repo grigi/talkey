@@ -16,7 +16,7 @@ except ImportError:
 LAST_PLAY = None
 
 # Patch AbstractTTSEngine.play to record its params
-# Really need to change this to use Mock.patch
+# Really need to make this loosely connected
 from talkey.base import AbstractTTSEngine, subprocess
 def fakeplay(self, filename, translate=False):
     global LAST_PLAY

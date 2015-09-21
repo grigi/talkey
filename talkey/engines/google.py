@@ -12,8 +12,9 @@ from talkey.utils import check_network_connection, check_python_import
 
 class GoogleTTS(AbstractTTSEngine):
     """
-    Uses the Google TTS online translator
-    Requires pymad and gTTS to be available
+    Uses the Google TTS online translator.
+
+    Requires module ``gTTS`` to be available.
     """
 
     SLUG = "google"

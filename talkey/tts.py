@@ -5,9 +5,21 @@ from .engines import _ENGINE_MAP, _ENGINE_ORDER
 
 
 def enumerate_engines():
+    '''
+    Returns list of engine SLUGs in order of preference
+    '''
     return _ENGINE_ORDER
 
 def create_engine(engine, options=None, defaults=None):
+    '''
+    Creates an instance of an engine.
+    There is a two-stage instantiation process with engines.
+
+    1. ``options``:
+        The keyword options to instantiate the engine class
+    2. ``defaults``:
+        The default configuration for the engine (options often depends on instantiated TTS engine)
+    '''
     if engine not in _ENGINE_MAP.keys():
         raise TTSError('Unknown engine %s' % engine)
 
@@ -18,6 +30,37 @@ def create_engine(engine, options=None, defaults=None):
     return einst
 
 class Talkey(object):
+    '''
+    Manages engines and allows multi-lingual say()
+
+    ``preferred_languages``
+        A list of languages that are weighted in preference. This is a weighting to assist the detection of language by classify().
+    ``preferred_factor``
+        The weighting factor to prefer the ``preferred_languages`` list. Higher number skews towards preference.
+    ``engine_preference``
+        Specify preferred engines in order of preference.
+    ``**config``
+        Engine-specfic configuration, e.g.:
+
+        .. code-block:: python
+
+            espeak={
+                # Specify some engine defaults (globally)
+                'defaults': {
+                        'words_per_minute': 150,
+                        'variant': 'f4',
+                },
+
+                # Here you specify language-specific configuration
+                # e.g. for english we prefer the mbrola en1 voice
+                'languages': {
+                    'en': {
+                        'voice': 'english-mb-en1',
+                        'words_per_minute': 130
+                    },
+                }
+            }
+    '''
 
     def __init__(self, preferred_languages=None, preferred_factor=80.0, engine_preference=None, **config):
         self.preferred_languages = preferred_languages or []
@@ -52,6 +95,9 @@ class Talkey(object):
             raise TTSError('No supported languages')
 
     def classify(self, txt):
+        '''
+        Classifies text by language. Uses preferred_languages weighting.
+        '''
         ranks = []
         for lang, score in langid.rank(txt):
             if lang in self.preferred_languages:
@@ -61,12 +107,20 @@ class Talkey(object):
         return ranks[0][0]
 
     def get_engine_for_lang(self, lang):
+        '''
+        Determines the preferred engine/voice for a language.
+        '''
         for en in self.engines:
             if lang in en.languages.keys():
                 return en
         raise TTSError('Could not match language')
 
-    def say(self, txt):
+    def say(self, txt, lang=None):
+        '''
+        Says the text.
+
+        if ``lang`` is ``None``, then uses ``classify()`` to detect language.
+        '''
         lang = self.classify(txt)
         self.get_engine_for_lang(lang).say(txt, language=lang)
 

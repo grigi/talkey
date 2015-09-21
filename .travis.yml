@@ -9,7 +9,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y alsa-utils festival flite espeak file libttspico-utils mbrola-en1
 install:
-  - pip install coveralls 
+  - pip install coveralls coverage==3.7.1
   - pip install .
 script:
   - coverage run --branch --source=talkey setup.py -q test

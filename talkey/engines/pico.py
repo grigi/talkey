@@ -7,8 +7,9 @@ from talkey.utils import check_executable
 
 class PicoTTS(AbstractTTSEngine):
     """
-    Uses the svox-pico-tts speech synthesizer
-    Requires pico2wave to be available
+    Uses the svox-pico-tts speech synthesizer.
+
+    Requires ``pico2wave`` to be available.
     """
 
     SLUG = "pico"

@@ -8,7 +8,8 @@ from talkey.utils import check_executable
 class EspeakTTS(AbstractTTSEngine):
     """
     Uses the eSpeak speech synthesizer.
-    Requires espeak to be available
+
+    Requires ``espeak`` and optionally ``mbrola`` to be available.
     """
 
     SLUG = "espeak"

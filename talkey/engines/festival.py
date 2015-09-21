@@ -7,8 +7,9 @@ from talkey.utils import check_executable
 
 class FestivalTTS(AbstractTTSEngine):
     """
-    Uses the festival speech synthesizer
-    Requires festival to be available
+    Uses the festival speech synthesizer.
+
+    Requires ``festival`` to be available.
     """
 
     SLUG = 'festival'
