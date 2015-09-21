@@ -1,10 +1,11 @@
 import os
 import tempfile
 import pipes
-from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, subprocess
+from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, subprocess, register
 from talkey.utils import check_executable
 
 
+@register
 class EspeakTTS(AbstractTTSEngine):
     """
     Uses the eSpeak speech synthesizer.

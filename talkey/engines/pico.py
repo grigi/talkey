@@ -2,9 +2,11 @@ import os
 import re
 import tempfile
 import pipes
-from talkey.base import AbstractTTSEngine, subprocess
+from talkey.base import AbstractTTSEngine, subprocess, register
 from talkey.utils import check_executable
 
+
+@register
 class PicoTTS(AbstractTTSEngine):
     """
     Uses the svox-pico-tts speech synthesizer.

@@ -6,10 +6,11 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
-from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
+from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, register
 from talkey.utils import check_network_connection, check_python_import
 
 
+@register
 class GoogleTTS(AbstractTTSEngine):
     """
     Uses the Google TTS online translator.

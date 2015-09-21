@@ -1,10 +1,11 @@
 import os
 import tempfile
 import pipes
-from talkey.base import AbstractTTSEngine, subprocess
+from talkey.base import AbstractTTSEngine, subprocess, register
 from talkey.utils import check_executable
 
 
+@register
 class FliteTTS(AbstractTTSEngine):
     """
     Uses the flite speech synthesizer.

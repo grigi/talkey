@@ -10,10 +10,11 @@ except ImportError:
     # pylint: disable=E0611
     from urllib.parse import urlunsplit, urlencode
 
-from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS
+from talkey.base import AbstractTTSEngine, DETECTABLE_LANGS, register
 from talkey.utils import check_network_connection
 
 
+@register
 class MaryTTS(AbstractTTSEngine):
     """
     Uses the MARY Text-to-Speech System (MaryTTS)

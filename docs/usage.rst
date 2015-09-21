@@ -1,8 +1,8 @@
 Usage
 =====
 
-talkey module
--------------
+talkey module:
+--------------
 
 .. autofunction:: talkey.enumerate_engines
 
@@ -15,19 +15,31 @@ talkey module
 .. autoexception:: talkey.TTSError
 
 
-engine options
---------------
+Engine options:
+---------------
 
+espeak:
+^^^^^^^
 .. autoclass:: talkey.engines.EspeakTTS
 
+festival:
+^^^^^^^^^
 .. autoclass:: talkey.engines.FestivalTTS
 
+flite:
+^^^^^^
 .. autoclass:: talkey.engines.FliteTTS
 
+pico:
+^^^^^
 .. autoclass:: talkey.engines.PicoTTS
 
+mary:
+^^^^^
 .. autoclass:: talkey.engines.MaryTTS
 
+google:
+^^^^^^^
 .. autoclass:: talkey.engines.GoogleTTS
 
 

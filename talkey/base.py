@@ -20,6 +20,26 @@ import wave
 # Get the list of identifiable languages
 DETECTABLE_LANGS = sorted([a[0] for a in langid.rank('')])
 
+def genrst(label, opt, txt, indent='    '):
+    txt += '\n%s%s:\n\n' % (indent, label)
+    for key in sorted(opt.keys()):
+        val = opt[key]
+        txt += indent+'``%s``\n' % key
+        txt += indent+'    %s\n\n' % val.get('description', '%s option' % key)
+        txt += indent+'    :type: %s\n' % val['type']
+        txt += indent+'    :default: %s\n' % val['default']
+        if 'min' in val.keys():
+            txt += indent+'    :min: %s\n' % val['min']
+        if 'max' in val.keys():
+            txt += indent+'    :max: %s\n' % val['max']
+        if 'values' in val.keys():
+            txt += indent+'    :values: %s\n' % ', '.join(val['values'])
+    return txt
+
+def register(cls):
+    cls.__doc__ = genrst('Initialization options', cls.get_init_options(), cls.__doc__)
+    #print(cls.__doc__)
+    return cls
 
 class TTSError(Exception):
 
