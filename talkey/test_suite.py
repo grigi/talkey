@@ -127,7 +127,7 @@ class CreateEngineTest(unittest.TestCase):
         assert eng.languages
 
     def test_create_engine_bad(self):
-        with self.assertRaisesRegexp(TTSError):
+        with self.assertRaisesRegexp(TTSError, 'Unknown engine'):
             create_engine('baddy')
 
 
@@ -340,7 +340,7 @@ class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
     SLUG = 'mary'
     INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
-    CONF = {'enabled': True, 'host': 'mary.dfki.de'}
+    CONF = {'enabled': True}#, 'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
 
