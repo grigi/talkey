@@ -10,17 +10,6 @@ Install from pypi:
 
     pip install talkey
 
-Usage
------
-
-At its simplest use case:
-
-.. code-block:: python
-
-    import talkey
-    tts = talkey.Talkey()
-    tts.say('Old McDonald had a farm')
-
 Engines supported
 ^^^^^^^^^^^^^^^^^
 
@@ -37,7 +26,22 @@ Installing one or more of those engines should allow the libary to function and 
 It also supports the following networked TTS Engines:
 
 * MaryTTS (needs hosting)
-* Google TTS (cloud hosted)
+* Google TTS (cloud hosted) Requires:
+    .. code-block:: shell
+
+        pip install gTTS
+
+Usage
+-----
+
+At its simplest use case:
+
+.. code-block:: python
+
+    import talkey
+    tts = talkey.Talkey()
+    tts.say('Old McDonald had a farm')
+
 
 Simple configuration
 ^^^^^^^^^^^^^^^^^^^^

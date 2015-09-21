@@ -46,14 +46,18 @@ class Talkey(object):
 
         .. code-block:: python
 
+            # Key is the engine SLUG, in this case ``espeak``
             espeak={
-                # Specify some engine defaults (globally)
+                # Specify the engine options:
+                'enabled': True,
+
+                # Specify some default voice options
                 'defaults': {
                         'words_per_minute': 150,
                         'variant': 'f4',
                 },
 
-                # Here you specify language-specific configuration
+                # Here you specify language-specific voice options
                 # e.g. for english we prefer the mbrola en1 voice
                 'languages': {
                     'en': {

@@ -127,7 +127,7 @@ class CreateEngineTest(unittest.TestCase):
         assert eng.languages
 
     def test_create_engine_bad(self):
-        with self.assertRaisesRegexp(TTSError, 'Unknown engine'):
+        with self.assertRaisesRegexp(TTSError):
             create_engine('baddy')
 
 
