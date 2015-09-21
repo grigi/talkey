@@ -23,7 +23,7 @@ class MaryTTS(AbstractTTSEngine):
     (http://mary.dfki.de:59125/) to save bandwidth and to protect your privacy.
     """
 
-    SLUG = "mary-tts"
+    SLUG = "mary"
 
     @classmethod
     def _get_init_options(cls):

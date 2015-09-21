@@ -11,7 +11,7 @@ class PicoTTS(AbstractTTSEngine):
     Requires pico2wave to be available
     """
 
-    SLUG = "pico-tts"
+    SLUG = "pico"
 
     @classmethod
     def _get_init_options(cls):

@@ -7,7 +7,7 @@ class DummyTTS(AbstractTTSEngine):
     speech.
     """
 
-    SLUG = "dummy-tts"
+    SLUG = "dummy"
 
     @classmethod
     def _get_init_options(cls):

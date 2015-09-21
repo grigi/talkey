@@ -16,7 +16,7 @@ class GoogleTTS(AbstractTTSEngine):
     Requires pymad and gTTS to be available
     """
 
-    SLUG = "google-tts"
+    SLUG = "google"
 
     @classmethod
     def _get_init_options(cls):

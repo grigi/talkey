@@ -7,13 +7,13 @@ from .pico import PicoTTS
 from .google import GoogleTTS
 
 _ENGINE_MAP = {
-    'dummy-tts': DummyTTS,
-    'flite-tts': FliteTTS,
-    'pico-tts': PicoTTS,
-    'festival-tts': FestivalTTS,
-    'espeak-tts': EspeakTTS,
-    'mary-tts': MaryTTS,
-    'google-tts': GoogleTTS,
+    'dummy': DummyTTS,
+    'flite': FliteTTS,
+    'pico': PicoTTS,
+    'festival': FestivalTTS,
+    'espeak': EspeakTTS,
+    'mary': MaryTTS,
+    'google': GoogleTTS,
 }
 
-_ENGINE_ORDER = ['google-tts', 'mary-tts', 'espeak-tts', 'festival-tts', 'pico-tts', 'flite-tts', 'dummy-tts']
+_ENGINE_ORDER = ['google', 'mary', 'espeak', 'festival', 'pico', 'flite', 'dummy']

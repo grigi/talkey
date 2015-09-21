@@ -19,15 +19,18 @@ def create_engine(engine, options=None, defaults=None):
 
 class Talkey(object):
 
-    def __init__(self, config=None):
-        config = config or {}
+    def __init__(self, preferred_languages=None, preferred_factor=80.0, engine_preference=None, **config):
+        self.preferred_languages = preferred_languages or []
+        self.preferred_factor = preferred_factor
+        engine_preference = engine_preference or enumerate_engines()
+        for ename in enumerate_engines():
+            if ename not in engine_preference:
+                engine_preference.append(ename)
 
         self.engines = []
         self.languages = set()
-        self.preferred_languages = set(config.get('preferred_languages', []))
-        self.preferred_factor = float(config.get('preferred_factor', 80.0))
 
-        for ename in enumerate_engines():
+        for ename in engine_preference:
             try:
                 options = config.get(ename,{}).get('options',{})
                 defaults = config.get(ename,{}).get('defaults',{})

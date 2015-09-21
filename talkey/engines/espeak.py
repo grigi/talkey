@@ -11,7 +11,7 @@ class EspeakTTS(AbstractTTSEngine):
     Requires espeak to be available
     """
 
-    SLUG = "espeak-tts"
+    SLUG = "espeak"
     # http://espeak.sourceforge.net/languages.html
     QUALITY_LANGS = [
         'en', 'af', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'eo', 'es',

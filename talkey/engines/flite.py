@@ -11,7 +11,7 @@ class FliteTTS(AbstractTTSEngine):
     Requires flite to be available
     """
 
-    SLUG = 'flite-tts'
+    SLUG = 'flite'
 
     @classmethod
     def _get_init_options(cls):

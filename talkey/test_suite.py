@@ -118,14 +118,14 @@ class ProcessOptionsTest(unittest.TestCase):
 
 class CreateEngineTest(unittest.TestCase):
     def test_create_engine(self):
-        eng = create_engine('dummy-tts', options={'enabled': True})
-        self.assertEqual(eng.SLUG, 'dummy-tts')
+        eng = create_engine('dummy', options={'enabled': True})
+        self.assertEqual(eng.SLUG, 'dummy')
         self.assertTrue(eng.available)
         assert eng.languages
 
     def test_create_engine_bad(self):
         with self.assertRaisesRegexp(TTSError, 'Unknown engine'):
-            create_engine('baddy-tts')
+            create_engine('baddy')
 
 
 class TalkeyTest(unittest.TestCase):
@@ -145,7 +145,7 @@ class TalkeyTest(unittest.TestCase):
         for txt in self.TXTS:
             self.assertEqual(txt[1], tts.classify(txt[2]))
 
-        self.assertEqual(tts.get_engine_for_lang('en').SLUG, 'espeak-tts')
+        self.assertEqual(tts.get_engine_for_lang('en').SLUG, 'espeak')
 
         tts.say('Old McDonald had a farm')
         inst, filename, output = LAST_PLAY
@@ -154,25 +154,25 @@ class TalkeyTest(unittest.TestCase):
         self.assertFalse(isfile(filename), 'Tempfile not deleted')
 
     def test_create_weighted(self):
-        tts = Talkey(config=dict(preferred_languages=['en', 'af']))
+        tts = Talkey(preferred_languages=['en', 'af'])
         for txt in self.TXTS:
             self.assertEqual(txt[0], tts.classify(txt[2]))
 
-        tts = Talkey(config=dict(preferred_languages=['en', 'af'], preferred_factor=10.0))
+        tts = Talkey(preferred_languages=['en', 'af'], preferred_factor=10.0)
         self.assertEqual(self.TXTS[2][1], tts.classify(self.TXTS[2][2]))
 
     def test_create_empty(self):
         with self.assertRaisesRegexp(TTSError, 'No supported languages'):
-            Talkey(config={
-                'espeak-tts': {'options': {'enabled': False}},
-                'festival-tts': {'options': {'enabled': False}},
-                'pico-tts': {'options': {'enabled': False}},
-                'flite-tts': {'options': {'enabled': False}},
-            })
+            Talkey(
+                espeak={'options': {'enabled': False}},
+                festival={'options': {'enabled': False}},
+                pico={'options': {'enabled': False}},
+                flite={'options': {'enabled': False}},
+            )
 
     def test_create_language_config(self):
-        tts = Talkey(config={
-            'espeak-tts': {
+        tts = Talkey(
+            espeak={
                 'languages': {
                     'en': {
                         'voice': 'english-mb-en1',
@@ -180,16 +180,16 @@ class TalkeyTest(unittest.TestCase):
                     },
                 }
             },
-        })
+        )
         eng = tts.engines[0]
         self.assertEqual(eng.languages_options['en'][0], 'english-mb-en1')
         self.assertEqual(eng.languages_options['en'][1]['words_per_minute'], 130)
 
     def test_get_engine_for_lang(self):
-        tts = Talkey(config={
-            'espeak-tts': {'options': {'enabled': False}},
-        })
-        self.assertEqual(tts.get_engine_for_lang('fr').SLUG, 'pico-tts')
+        tts = Talkey(
+            espeak={'options': {'enabled': False}},
+        )
+        self.assertEqual(tts.get_engine_for_lang('fr').SLUG, 'pico')
         with self.assertRaisesRegexp(TTSError, 'Could not match language'):
             tts.get_engine_for_lang('af')
 
@@ -264,7 +264,7 @@ class BaseTTSTest(unittest.TestCase):
 
 class DummyTTSTest(BaseTTSTest):
     CLS = DummyTTS
-    SLUG = 'dummy-tts'
+    SLUG = 'dummy'
     INIT_ATTRS = ['enabled']
     CONF = {'enabled': True}
     EVAL_PLAY = False
@@ -280,17 +280,17 @@ class DummyTTSTest(BaseTTSTest):
 
 class FestivalTTSTest(BaseTTSTest):
     CLS = FestivalTTS
-    SLUG = 'festival-tts'
+    SLUG = 'festival'
 
 
 class FliteTTSTest(BaseTTSTest):
     CLS = FliteTTS
-    SLUG = 'flite-tts'
+    SLUG = 'flite'
 
 
 class EspeakTTSTest(BaseTTSTest):
     CLS = EspeakTTS
-    SLUG = 'espeak-tts'
+    SLUG = 'espeak'
     INIT_ATTRS = ['enabled', 'espeak', 'mbrola', 'mbrola_voices', 'passable_only']
     OBJ_ATTRS = ['words_per_minute', 'pitch_adjustment', 'variant']
     EVAL_PLAY = True
@@ -322,21 +322,21 @@ class EspeakTTSTest(BaseTTSTest):
 
 class PicoTTSTest(BaseTTSTest):
     CLS = PicoTTS
-    SLUG = 'pico-tts'
+    SLUG = 'pico'
 
 
 class MaryTTSTest(BaseTTSTest):
     CLS = MaryTTS
-    SLUG = 'mary-tts'
+    SLUG = 'mary'
     INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
-    CONF = {'enabled': True, 'host': 'mary.dfki.de'}
+    CONF = {'enabled': True}#, 'host': 'mary.dfki.de'}
     EVAL_PLAY = True
     SKIP_IF_NOT_AVAILABLE = True
 
 
 class GoogleTTSTest(BaseTTSTest):
     CLS = GoogleTTS
-    SLUG = 'google-tts'
+    SLUG = 'google'
     CONF = {'enabled': True}
     FILE_TYPE = 'MPEG ADTS, layer III'
     SKIP_IF_NOT_AVAILABLE = True

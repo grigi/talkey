@@ -11,7 +11,7 @@ class FestivalTTS(AbstractTTSEngine):
     Requires festival to be available
     """
 
-    SLUG = 'festival-tts'
+    SLUG = 'festival'
 
     SAY_TEMPLATE = """(Parameter.set 'Audio_Required_Format 'riff)
 (Parameter.set 'Audio_Command "mv $FILE {outfilename}")
