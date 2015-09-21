@@ -5,7 +5,7 @@ import socket
 import functools
 import pkgutil
 if sys.version_info < (3, 3):
-    from distutils.spawn import _find_executable  # pylint: disable=E0611
+    from distutils.spawn import find_executable as _find_executable  # pylint: disable=E0611
 else:
     from shutil import which as _find_executable  # pylint: disable=E0611
 
