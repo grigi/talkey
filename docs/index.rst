@@ -16,6 +16,7 @@ Contents:
    getting_started
    usage
    engines
+   changelog
 
 
 
