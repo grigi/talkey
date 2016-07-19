@@ -3,4 +3,4 @@ Simple Test-To-Speech (TTS) interface library with multi-language and multi-engi
 '''
 from .tts import Talkey, enumerate_engines, create_engine, TTSError
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
