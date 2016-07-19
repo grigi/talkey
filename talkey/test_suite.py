@@ -351,3 +351,10 @@ class GoogleTTSTest(BaseTTSTest):
     CONF = {'enabled': True}
     FILE_TYPE = 'MPEG ADTS, layer III'
     SKIP_IF_NOT_AVAILABLE = True
+
+
+class SayTTSTest(BaseTTSTest):
+    CLS = SayTTS
+    SLUG = 'say'
+    CONF = {'enabled': True}
+    SKIP_IF_NOT_AVAILABLE = True
