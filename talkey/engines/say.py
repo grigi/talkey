@@ -21,7 +21,14 @@ class SayTTS(AbstractTTSEngine):
             },
         }
 
-    def is_available(self):
+    def sound_available(self):
+        """
+        We must override this function since the winsound module and the aplay
+        executable do not exist on macOS.
+        """
+        return platform.system() == 'Darwin'
+
+    def _is_available(self):
         return platform.system() == 'Darwin'
 
     def _get_options(self):
