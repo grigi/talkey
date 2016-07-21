@@ -18,6 +18,13 @@ I was really intrigued by the concept of jasper, a voice-controlled interface.
 I needed it to be multi-lingual like me, so this library is my attempt to make having the
 TTS engines multi-lingual. A lot of this code is inspired by the Jasper project.
 
+System Requirements
+===================
+
+* Python 2.7 or later
+* An installed TTS engine (see below for help installing one)
+* macOS (tested on 10.11 and 10.12), Linux (Ubuntu, Debian), Windows
+
 Basic Usage
 ===========
 
