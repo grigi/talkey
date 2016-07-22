@@ -8,8 +8,8 @@ python:
   - 3.4
   - 3.5
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; sudo apt-get update -qq; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; sudo apt-get install -y alsa-utils festival flite espeak file libttspico-utils mbrola-en1; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y alsa-utils festival flite espeak file libttspico-utils mbrola-en1; fi
 install:
   - pip install coveralls coverage
   - pip install .
