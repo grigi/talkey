@@ -66,7 +66,7 @@ class MaryTTS(AbstractTTSEngine):
         return {}
 
     def _get_languages(self):
-        res = requests.get(self._makeurl('voices')).text
+        res = requests.get(self._makeurl('voices'), timeout=5).text
         langs = {}
         for voice in [row.split() for row in res.split('\n') if row]:
             lang = voice[1].split('_')[0]
@@ -85,7 +85,7 @@ class MaryTTS(AbstractTTSEngine):
                  'LOCALE': voiceinfo['locale'],
                  'VOICE': voice}
 
-        res = requests.get(self._makeurl('/process', query=query))
+        res = requests.get(self._makeurl('/process', query=query), timeout=5)
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             f.write(res.content)
             tmpfile = f.name
