@@ -161,7 +161,7 @@ class TalkeyTest(unittest.TestCase):
         for txt in self.TXTS:
             self.assertEqual(txt[0], tts.classify(txt[2]))
 
-        tts = Talkey(preferred_languages=['en', 'af'], preferred_factor=10.0)
+        tts = Talkey(preferred_languages=['en', 'af'], preferred_factor=2.0)
         self.assertEqual(self.TXTS[2][1], tts.classify(self.TXTS[2][2]))
 
     def test_create_empty(self):
