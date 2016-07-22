@@ -357,6 +357,7 @@ class GoogleTTSTest(BaseTTSTest):
 class SayTTSTest(BaseTTSTest):
     CLS = SayTTS
     SLUG = 'say'
+    EVAL_PLAY = False
     INIT_ATTRS = ['enabled', 'say']
     CONF = {'enabled': True}
     SKIP_IF_NOT_AVAILABLE = True
