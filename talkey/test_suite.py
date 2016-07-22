@@ -215,7 +215,7 @@ class BaseTTSTest(unittest.TestCase):
     CONF = {}
     OBJ_ATTRS = []
     EVAL_PLAY = True
-    SKIP_IF_NOT_AVAILABLE = False
+    SKIP_IF_NOT_AVAILABLE = True
     FILE_TYPE = 'WAVE audio'
 
     @classmethod
@@ -343,7 +343,6 @@ class MaryTTSTest(BaseTTSTest):
     INIT_ATTRS = ['enabled', 'host', 'port', 'scheme']
     CONF = {'enabled': True, 'host': 'mary.dfki.de'}
     EVAL_PLAY = True
-    SKIP_IF_NOT_AVAILABLE = True
 
 
 class GoogleTTSTest(BaseTTSTest):
@@ -351,7 +350,6 @@ class GoogleTTSTest(BaseTTSTest):
     SLUG = 'google'
     CONF = {'enabled': True}
     FILE_TYPE = 'MPEG ADTS, layer III'
-    SKIP_IF_NOT_AVAILABLE = True
 
 
 class SayTTSTest(BaseTTSTest):
@@ -360,4 +358,3 @@ class SayTTSTest(BaseTTSTest):
     EVAL_PLAY = False
     INIT_ATTRS = ['enabled', 'say']
     CONF = {'enabled': True}
-    SKIP_IF_NOT_AVAILABLE = True
