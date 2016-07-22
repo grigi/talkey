@@ -24,8 +24,6 @@ def get_test_requirements():
     requirements = [
         'gtts',
     ]
-    if sys.version_info[0:2] == (2, 6):
-        requirements.append('unittest2')
     return requirements
 
 setup(
@@ -55,10 +53,12 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
+        'Operating System :: MacOS',
+        'Operating System :: Microsoft Windows',
         'Operating System :: POSIX :: Linux',
+        'Environment :: MacOS X',
         'Environment :: Win32 (MS Windows)',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
@@ -68,4 +68,3 @@ setup(
         'Topic :: Multimedia :: Sound/Audio :: Speech',
     ]
 )
-

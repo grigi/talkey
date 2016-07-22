@@ -1,19 +1,21 @@
 from .dummy import DummyTTS
+from .espeak import EspeakTTS
 from .festival import FestivalTTS
 from .flite import FliteTTS
-from .espeak import EspeakTTS
+from .google import GoogleTTS
 from .mary import MaryTTS
 from .pico import PicoTTS
-from .google import GoogleTTS
+from .say import SayTTS
 
 _ENGINE_MAP = {
     'dummy': DummyTTS,
-    'flite': FliteTTS,
-    'pico': PicoTTS,
-    'festival': FestivalTTS,
     'espeak': EspeakTTS,
-    'mary': MaryTTS,
+    'flite': FliteTTS,
+    'festival': FestivalTTS,
     'google': GoogleTTS,
+    'mary': MaryTTS,
+    'pico': PicoTTS,
+    'say': SayTTS,
 }
 
-_ENGINE_ORDER = ['google', 'mary', 'espeak', 'festival', 'pico', 'flite', 'dummy']
+_ENGINE_ORDER = ['google', 'mary', 'espeak', 'festival', 'pico', 'flite', 'say', 'dummy']

@@ -171,6 +171,7 @@ class TalkeyTest(unittest.TestCase):
                 festival={'options': {'enabled': False}},
                 pico={'options': {'enabled': False}},
                 flite={'options': {'enabled': False}},
+                say={'options': {'enabled': False}},
             )
 
     def test_create_language_config(self):
@@ -350,4 +351,12 @@ class GoogleTTSTest(BaseTTSTest):
     SLUG = 'google'
     CONF = {'enabled': True}
     FILE_TYPE = 'MPEG ADTS, layer III'
+    SKIP_IF_NOT_AVAILABLE = True
+
+
+class SayTTSTest(BaseTTSTest):
+    CLS = SayTTS
+    SLUG = 'say'
+    INIT_ATTRS = ['enabled', 'say']
+    CONF = {'enabled': True}
     SKIP_IF_NOT_AVAILABLE = True
