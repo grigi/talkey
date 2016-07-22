@@ -18,6 +18,6 @@ install:
   - pip install coveralls coverage
   - pip install .
 script:
-  - coverage run --branch --source=talkey setup.py -q test
+  - coverage run --branch --source=talkey setup.py test
 after_success: 
   - coveralls
