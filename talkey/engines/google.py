@@ -4,7 +4,7 @@ import tempfile
 try:
     import gtts
 except ImportError:  # pragma: no cover
-    pass
+    print("Error. gtts module not found")
 
 from talkey.base import AbstractTTSEngine, register
 from talkey.utils import check_network_connection, check_python_import
