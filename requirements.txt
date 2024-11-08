@@ -1,6 +1,7 @@
 # talkey
 langid
 requests
+standard-pipes
 
 # What follows here is just for testing or code grading:
 tox
